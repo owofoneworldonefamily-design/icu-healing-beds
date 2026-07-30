@@ -48,6 +48,8 @@
 
 <!-- jsPDF for client-side pledge PDF generation -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<!-- html2canvas for plaque-preview PNG download -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 <style>
 
 /* ============ FONTS ============ */
@@ -334,6 +336,32 @@ section#journey{padding-top:100px; padding-bottom:100px;}
   box-shadow:0 30px 60px -34px rgba(45,45,45,0.35);
 }
 .journey-media img{width:100%; height:auto; border-radius:4px; display:block;}
+.bed-photo-wrap{position:relative;}
+.bed-photo-wrap img{width:100%; height:auto; border-radius:4px; display:block;}
+/* Positioned to match the physical plaque's exact location on the bed photo
+   (measured directly from the reference photo, as a % of the image box so
+   it tracks correctly at any display size). */
+.bed-plaque-overlay{
+  position:absolute; left:39.24%; top:71.1%; width:20.34%; height:5.22%;
+  border-radius:8%;
+  background:linear-gradient(180deg,
+      #ecd7a4 0%, #dcb968 32%, #c69a45 62%, #a67c2e 100%);
+  border:0.5px solid rgba(80,58,14,0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -1.5px 2px rgba(70,50,10,0.4),
+    0 1px 1px rgba(0,0,0,0.15);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+  overflow:hidden; padding:3% 5%;
+}
+.bed-plaque-label{
+  font-family:"Gantari",sans-serif; font-weight:700; color:var(--maroon-deep); text-transform:uppercase;
+  letter-spacing:.12em; line-height:1; white-space:nowrap; flex-shrink:0; margin-bottom:3%; opacity:.85;
+}
+.bed-plaque-name{
+  font-family:"Gentium", serif; font-weight:700; color:var(--maroon-deep); line-height:1.15;
+  white-space:pre-line; word-wrap:break-word; width:100%;
+}
 .journey-media .cap{
   display:block; margin-top:16px; color:var(--red);
   font-size:13px; letter-spacing:.1em; text-transform:uppercase; font-weight:700; text-align:center;
@@ -391,7 +419,10 @@ section#gallery{padding-top:80px; padding-bottom:80px;}
   background:var(--maroon-deep);
   box-shadow:0 30px 60px -30px rgba(45,45,45,0.4);
 }
-.carousel-viewport{position:relative; width:100%; aspect-ratio:16/9; overflow:hidden;}
+.carousel-viewport{
+  position:relative; width:100%; aspect-ratio:16/9; overflow:hidden;
+  background:linear-gradient(135deg, var(--cream-dim) 0%, #ecdfb8 100%);
+}
 .carousel-track{
   display:flex; height:100%; width:100%;
   transition:transform .55s cubic-bezier(.2,.8,.2,1);
@@ -399,22 +430,19 @@ section#gallery{padding-top:80px; padding-bottom:80px;}
 }
 .carousel-slide{position:relative; flex:0 0 100%; height:100%;}
 .carousel-slide img{
-  width:100%; height:100%; object-fit:cover; object-position:center; display:block;
+  width:100%; height:100%; object-fit:contain; object-position:center; display:block;
   cursor:zoom-in;
 }
-.carousel-slide::after{
-  content:""; position:absolute; inset:0;
-  background:linear-gradient(to top, rgba(58,18,16,0.85) 0%, rgba(58,18,16,0.22) 32%, transparent 55%);
-  pointer-events:none;
-}
 .carousel-slide figcaption{
-  position:absolute; left:24px; right:24px; bottom:20px; z-index:1;
+  position:absolute; left:16px; bottom:16px; z-index:1;
   color:var(--cream); font-family:"Gantari",sans-serif;
-  font-size:13px; letter-spacing:.08em; text-transform:uppercase; font-weight:700;
+  font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:700;
+  background:var(--red); padding:8px 14px; border-radius:3px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.2);
 }
 .carousel-slide figcaption::before{
-  content:""; display:inline-block; width:18px; height:2px; background:var(--gold-2);
-  margin-right:10px; vertical-align:middle;
+  content:""; display:inline-block; width:14px; height:2px; background:var(--cream);
+  margin-right:9px; vertical-align:middle; opacity:.85;
 }
 .car-arrow{
   position:absolute; top:50%; transform:translateY(-50%); z-index:2;
@@ -450,7 +478,7 @@ section#gallery{padding-top:80px; padding-bottom:80px;}
 }
 @media (max-width:560px){
   .car-arrow{width:36px; height:36px;}
-  .carousel-slide figcaption{font-size:11.5px; left:16px; right:16px; bottom:14px;}
+  .carousel-slide figcaption{font-size:11px; left:12px; bottom:12px; padding:6px 11px;}
   .carousel-thumbs{grid-template-columns:repeat(4, 1fr); gap:6px;}
 }
 
@@ -591,17 +619,39 @@ form.pledge-form{
 /* Recognition name + plaques: stacked layout so nothing overlaps */
 .form-row.recog-row{grid-template-columns:1fr;}
 .gold-plaque-wrap{display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:flex-start; gap:14px 10px; margin-top:16px;}
+/* Real plate is 10in x 3.5in — every preview keeps that exact 20:7 proportion.
+   SUPPORTED BY + rule tuck right up at the top edge; the donor's name is the
+   hero of the plate and owns everything below the rule. */
 .gold-plaque{
-  flex:1 1 130px; max-width:200px; min-height:74px; border-radius:4px; padding:12px 16px;
-  background:linear-gradient(155deg, var(--gold-1) 0%, var(--gold-2) 22%, #f6e6b4 45%, var(--gold-3) 68%, #f0dc9e 88%, #c79a3e 100%);
-  border:1px solid var(--gold-edge);
-  box-shadow:inset 0 1px 1px rgba(255,255,255,0.6), inset 0 -2px 3px rgba(90,65,15,0.35), 0 10px 20px -12px rgba(45,45,45,0.4);
-  display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+  flex:1 1 168px; max-width:238px; width:100%; aspect-ratio:10/3.5;
+  position:relative;
+  border-radius:6px; padding:3.5% 6% 4%;
+  background:
+    repeating-linear-gradient(0deg,
+      rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px,
+      rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 3px),
+    linear-gradient(135deg,
+      #b08d3b 0%, #cfae5e 18%, #e3cd8f 38%, #c5a04a 55%,
+      #dcc27c 75%, #b3903c 100%);
+  background-blend-mode:overlay;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,0.3), inset 0 -2px 4px rgba(90,65,15,0.22), 0 2px 5px rgba(0,0,0,0.15), 0 10px 22px -12px rgba(45,45,45,0.35);
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start; text-align:center;
   overflow:hidden;
+}
+.plaque-actions{margin-top:12px;}
+.plaque-png-btn{
+  background:none; border:1px solid var(--line); border-radius:3px; padding:8px 16px;
+  font-family:"Gantari",sans-serif; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  font-weight:700; color:var(--red); cursor:pointer; transition:border-color .2s ease, background .2s ease;
+}
+.plaque-png-btn:hover{border-color:var(--red); background:rgba(126,35,32,0.05);}
+.gp-names{
+  flex:1; width:100%; min-height:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
 }
 .gp-bed-tag{
   font-family:"Gantari",sans-serif; font-size:8px; letter-spacing:.1em; text-transform:uppercase;
-  font-weight:700; color:#6b501f; margin-top:4px; opacity:0.85;
+  font-weight:700; color:var(--maroon-deep); margin-top:4px; opacity:0.8;
 }
 .same-name-row{display:flex; align-items:flex-start; gap:8px; margin-top:10px; font-size:13.5px; color:var(--gray);}
 .same-name-row input{margin-top:3px;}
@@ -609,21 +659,43 @@ form.pledge-form{
 .individual-names-wrap{display:flex; flex-direction:column; gap:10px; margin-top:14px;}
 .individual-name-field label{font-size:13px;}
 .gp-supported{
-  font-family:"Gantari",sans-serif; font-size:9px; letter-spacing:.16em; text-transform:uppercase;
-  font-weight:700; color:#5c4318; margin-bottom:4px; text-shadow:0 1px 0 rgba(255,255,255,0.4);
+  font-family:"Gantari",sans-serif; font-size:8px; letter-spacing:.18em; text-transform:uppercase;
+  font-weight:700; color:var(--maroon-deep); margin-bottom:6px; text-shadow:0 1px 0 rgba(255,255,255,0.3);
+  opacity:.9; flex-shrink:0;
 }
 .gp-name{
-  font-family:"Gentium", serif; font-weight:700; color:#4a3410; line-height:1.1;
-  text-shadow:0 1px 0 rgba(255,255,255,0.45); white-space:nowrap; max-width:100%;
+  font-family:"Gentium", serif; font-weight:700; color:var(--maroon-deep); line-height:1.05;
+  text-shadow:0 1px 0 rgba(255,255,255,0.3); white-space:nowrap; max-width:100%;
   overflow:hidden; text-overflow:ellipsis; font-size:20px;
 }
+.gp-nameblock{
+  font-family:"Gentium", serif; font-weight:700; color:var(--maroon-deep); line-height:1.22;
+  text-shadow:0 1px 0 rgba(255,255,255,0.3); width:100%;
+  white-space:pre-line; word-wrap:break-word; font-size:20px;
+}
+.gp-amp{
+  font-family:"Gentium", serif; font-weight:700; color:var(--maroon-deep); line-height:1;
+  text-shadow:0 1px 0 rgba(255,255,255,0.3); margin:1px 0; flex-shrink:0;
+}
+.field-hint{
+  font-size:12px; color:var(--gray); margin-top:6px; font-family:"Gentium", serif;
+}
 
+.pledge-actions{display:flex; gap:12px; flex-wrap:wrap;}
+.pledge-actions > button{flex:1 1 220px;}
 .submit-btn{
-  width:100%; background:var(--red); color:var(--cream); border:none; padding:17px 20px;
+  background:var(--red); color:var(--cream); border:none; padding:17px 20px;
   font-family:"Gantari",sans-serif; font-weight:700; font-size:14px; letter-spacing:.08em; text-transform:uppercase;
   border-radius:3px; cursor:pointer; transition:background .25s ease, transform .2s ease;
 }
 .submit-btn:hover{background:var(--red-bright); transform:translateY(-2px);}
+.submit-btn:disabled, .download-btn:disabled{opacity:.65; cursor:default; transform:none;}
+.download-btn{
+  background:transparent; color:var(--red); border:2px solid var(--red); padding:15px 20px;
+  font-family:"Gantari",sans-serif; font-weight:700; font-size:14px; letter-spacing:.08em; text-transform:uppercase;
+  border-radius:3px; cursor:pointer; transition:background .25s ease, transform .2s ease;
+}
+.download-btn:hover{background:rgba(126,35,32,0.06); transform:translateY(-2px);}
 .submit-note{font-size:12.5px; color:var(--gray); margin-bottom:14px; line-height:1.55;}
 .submit-note strong{color:var(--red);}
 
@@ -875,9 +947,15 @@ section#vision{padding-top:100px; padding-bottom:100px;}
 
     <div class="journey-layout">
       <div class="journey-media reveal">
-        <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/ICU%20Bed.jpg.jpeg" alt="A fully equipped ICU bed with monitoring and life-support equipment" width="874" height="1471" loading="lazy" decoding="async">
+        <div class="bed-photo-wrap" id="bedPhotoWrap">
+          <img src="https://raw.githubusercontent.com/owofoneworldonefamily-design/icu-healing-beds/main/Bed%20without%20Name.jpg" alt="A fully equipped ICU bed with monitoring and life-support equipment" width="1598" height="2688" loading="lazy" decoding="async">
+          <div class="bed-plaque-overlay" id="bedPlaqueOverlay" aria-hidden="true">
+            <div class="bed-plaque-label" id="bedPlaqueLabel">Supported by</div>
+            <div class="bed-plaque-name" id="bedPlaqueName">Your Name / Organisation</div>
+          </div>
+        </div>
         <span class="cap">One complete ICU bed unit</span>
-        <span class="cap-sub">3D render for illustration</span>
+        <span class="cap-sub">Your name appears here, exactly as you type it below</span>
       </div>
 
       <div class="journey-content">
@@ -981,7 +1059,7 @@ section#vision{padding-top:100px; padding-bottom:100px;}
       <div class="carousel-viewport">
         <div class="carousel-track" id="carouselTrack">
           <div class="carousel-slide">
-            <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Baba.jpg" alt="Baba's statue, marking His 100th birthday" loading="lazy" decoding="async">
+            <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Baba.jpg" alt="Baba's statue, marking His 100th birthday" loading="eager" decoding="async">
             <figcaption>Baba's statue &middot; 100th birthday</figcaption>
           </div>
           <div class="carousel-slide">
@@ -1155,7 +1233,7 @@ section#vision{padding-top:100px; padding-bottom:100px;}
         <div class="calc-bottom-row">
           <div class="field" style="max-width:110px; margin-bottom:0;">
             <label class="sr-only" for="bedCount">Number of beds</label>
-            <input type="text" id="bedCount" inputmode="numeric" pattern="[0-9]*" autocomplete="off" value="1" required style="text-align:center; font-weight:700; font-size:18px;">
+            <input type="text" id="bedCount" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" value="1" required style="text-align:center; font-weight:700; font-size:18px;">
           </div>
           <div class="calc-total">
             <span id="totalUsd">$28,000</span>
@@ -1196,17 +1274,23 @@ section#vision{padding-top:100px; padding-bottom:100px;}
       <div class="form-row recog-row">
         <div class="field">
           <label for="recogName" id="recogNameLabel">Recognition name (exactly as it should appear on the plaque)</label>
-          <input type="text" id="recogName" required placeholder="e.g. The Sharma Family">
+          <textarea id="recogName" rows="2" required placeholder="e.g. The Sharma Family or Maria &amp; John Carter" style="resize:vertical;"></textarea>
+          <p class="field-hint">Type it exactly as you'd like it engraved &mdash; one name, <strong>Maria &amp; John</strong>, or <strong>Maria, John &amp; Anita</strong>. Press <strong>Enter</strong> to start a new line on the plaque. The preview updates live and the text auto-shrinks so it never touches the plaque edges. For many people, consider a family or group name.</p>
           <div class="same-name-row" id="sameNameRow" style="display:none;">
             <input type="checkbox" id="sameNameAll" checked>
             <label for="sameNameAll">Use this same name on all plaques</label>
           </div>
           <div class="individual-names-wrap" id="individualNamesWrap" style="display:none;"></div>
         </div>
-        <div class="gold-plaque-wrap" id="plaqueWrap">
-          <div class="gold-plaque">
-            <div class="gp-supported">Supported by</div>
-            <div class="gp-name">Your Name / Organisation</div>
+        <div>
+          <div class="gold-plaque-wrap" id="plaqueWrap">
+            <div class="gold-plaque">
+              <div class="gp-supported">Supported by</div>
+              <div class="gp-names"><div class="gp-nameblock">Your Name / Organisation</div></div>
+            </div>
+          </div>
+          <div class="plaque-actions">
+            <button type="button" class="plaque-png-btn" id="plaquePngBtn">Download plaque preview (PNG)</button>
           </div>
         </div>
       </div>
@@ -1231,8 +1315,11 @@ section#vision{padding-top:100px; padding-bottom:100px;}
         </div>
       </div>
 
-      <p class="submit-note">Pressing <strong>Submit pledge</strong> does two things: it <strong>downloads your signed pledge as a PDF</strong> to your device, and it opens your email client pre-addressed to capex@ssslsg.org. <strong>Please attach the downloaded PDF to that email</strong> before pressing send. If your email doesn't open automatically, simply email the PDF to <a href="mailto:capex@ssslsg.org" style="color:var(--red); font-weight:700;">capex@ssslsg.org</a>.</p>
-      <button type="submit" class="submit-btn">Submit pledge</button>
+      <p class="submit-note"><strong>Download pledge</strong> saves your signed pledge as a PDF to your device only. <strong>Submit pledge</strong> does that too, and then opens your email &mdash; on phones and tablets that support sharing, the PDF is <strong>attached automatically</strong>; otherwise it opens your email client pre-addressed to capex@ssslsg.org and you'll need to attach the PDF that was just downloaded before pressing send. If email doesn't open automatically, you can always send the PDF yourself to <a href="mailto:capex@ssslsg.org" style="color:var(--red); font-weight:700;">capex@ssslsg.org</a>.</p>
+      <div class="pledge-actions">
+        <button type="button" class="download-btn" id="downloadPledgeBtn">Download pledge (PDF)</button>
+        <button type="submit" class="submit-btn">Submit pledge</button>
+      </div>
     </form>
   </div>
 </section>
@@ -1345,18 +1432,17 @@ document.querySelectorAll('.carousel-slide img, .vision-photo img').forEach(img=
   const total = slides.length;
   totalEl.textContent = total;
 
-  function render(scrollThumb){
+  function render(){
     track.style.transform = 'translateX(-' + (index*100) + '%)';
     currentEl.textContent = index+1;
     thumbs.forEach((t,i)=> t.classList.toggle('active', i===index));
-    if(scrollThumb){
-      const activeThumb = thumbs[index];
-      if(activeThumb) activeThumb.scrollIntoView({block:'nearest', inline:'center', behavior:'smooth'});
-    }
+    // Note: never scrollIntoView() the active thumb — the thumbnail grid is
+    // fully visible and scrollIntoView scrolls the whole PAGE, making the
+    // gallery jump when the arrows are clicked.
   }
   function goTo(i){
     index = (i+total) % total;
-    render(true);
+    render();
   }
   prevBtn.addEventListener('click', ()=>goTo(index-1));
   nextBtn.addEventListener('click', ()=>goTo(index+1));
@@ -1382,12 +1468,39 @@ document.querySelectorAll('.carousel-slide img, .vision-photo img').forEach(img=
     touchStartX = null;
   }, {passive:true});
 
-  // Autoplay, pausing on hover/focus (does not scroll the thumb strip, so the page never jumps)
-  let autoplay = setInterval(()=>{ if(!hovering){ index = (index+1) % total; render(false); } }, 5000);
-  viewport.addEventListener('mouseenter', ()=>{ clearInterval(autoplay); });
-  viewport.addEventListener('mouseleave', ()=>{ autoplay = setInterval(()=>{ if(!hovering){ index = (index+1) % total; render(false); } }, 5000); });
+  // Autoplay — but only while the reader is actually looking at it.
+  // The timer starts when ~90% of the carousel is inside the viewport
+  // (i.e. the whole picture is visible), pauses on hover, and stops
+  // entirely when the reader scrolls past. This way slide 1 is always
+  // what people see when they arrive, instead of a mid-rotation frame.
+  let autoplay = null;
+  let inView = false;
+  function startAutoplay(){
+    if(autoplay || !inView) return;
+    autoplay = setInterval(()=>{ if(!hovering && inView){ index = (index+1) % total; render(); } }, 5000);
+  }
+  function stopAutoplay(){
+    if(autoplay){ clearInterval(autoplay); autoplay = null; }
+  }
+  viewport.addEventListener('mouseenter', stopAutoplay);
+  viewport.addEventListener('mouseleave', startAutoplay);
 
-  render(false);
+  if(typeof IntersectionObserver !== 'undefined'){
+    const carIo = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        inView = entry.isIntersecting;
+        if(inView) startAutoplay();
+        else stopAutoplay();
+      });
+    }, {threshold:0.9});
+    carIo.observe(viewport);
+  } else {
+    // No IntersectionObserver (very old webviews): behave as before
+    inView = true;
+    startAutoplay();
+  }
+
+  render();
 })();
 </script>
 
@@ -1465,14 +1578,26 @@ const io = new IntersectionObserver((entries)=>{
 },{threshold:0, rootMargin:'0px 0px -5% 0px'});
 revealEls.forEach(el=>io.observe(el));
 
-// Safety net: content must never stay permanently invisible. If anything hasn't
-// revealed itself after 3s (slow connection, odd viewport, observer edge case),
-// force it visible rather than leaving a blank gap on the page.
-setTimeout(function(){
+// Safety net: content must never stay permanently invisible — but it must
+// also never be revealed BEFORE the reader reaches it (that kills the scroll
+// animations). So instead of a blanket timer, sweep on scroll/resize and
+// reveal only elements that are actually on screen right now.
+function revealSweep(){
   revealEls.forEach(function(el){
-    if(!el.classList.contains('in-view')) el.classList.add('in-view');
+    if(el.classList.contains('in-view')) return;
+    const r = el.getBoundingClientRect();
+    if(r.top < window.innerHeight && r.bottom > 0) el.classList.add('in-view');
   });
-}, 3000);
+}
+let revealSweepQueued = false;
+function queueRevealSweep(){
+  if(revealSweepQueued) return;
+  revealSweepQueued = true;
+  requestAnimationFrame(function(){ revealSweepQueued = false; revealSweep(); });
+}
+window.addEventListener('scroll', queueRevealSweep, {passive:true});
+window.addEventListener('resize', queueRevealSweep);
+window.addEventListener('load', queueRevealSweep);
 
 // ---------- Count-up stats ----------
 const counters = document.querySelectorAll('.stat-num[data-count]');
@@ -1584,9 +1709,18 @@ const monitorIo = new IntersectionObserver((entries)=>{
 },{threshold:0.15});
 monitorIo.observe(document.querySelector('.monitor'));
 
-// Safety net: never leave the readout stuck at "0" — if the observer hasn't fired
-// within 4s of load (webviews, unusual scroll contexts), set the true numbers.
-setTimeout(function(){ if(!monitorStarted){ monitorStarted = true; setMonitorFinal(); } }, 4000);
+// Safety net: never leave the readout stuck at "0" — but never pre-finish it
+// either (that's what stopped the bed light-up animation from playing). The
+// fallback now only fires when the monitor is actually on screen, and it runs
+// the full animation rather than jumping to the end.
+const monitorEl = document.querySelector('.monitor');
+function monitorFallbackCheck(){
+  if(monitorStarted) return;
+  const r = monitorEl.getBoundingClientRect();
+  if(r.top < window.innerHeight * 0.9 && r.bottom > 0) runMonitor();
+}
+window.addEventListener('scroll', monitorFallbackCheck, {passive:true});
+window.addEventListener('load', monitorFallbackCheck);
 
 // ---------- Pledge calculator ----------
 const bedCount = document.getElementById('bedCount');
@@ -1610,6 +1744,7 @@ function sanitizeBedInput(){
 function getBedsCount(){
   let beds = parseInt(bedCount.value, 10);
   if(!beds || beds < 1) beds = 1;
+  if(beds > TOTAL_BEDS) beds = TOTAL_BEDS; // can't pledge more beds than exist
   return beds;
 }
 
@@ -1626,6 +1761,7 @@ bedCount.addEventListener('input', function(){
 bedCount.addEventListener('blur', function(){
   sanitizeBedInput();
   if(!bedCount.value || parseInt(bedCount.value,10) < 1) bedCount.value = '1';
+  if(parseInt(bedCount.value,10) > TOTAL_BEDS) bedCount.value = String(TOTAL_BEDS);
   syncPresetActive();
   updateCalc();
   renderPlaques();
@@ -1665,6 +1801,9 @@ presetBtns.forEach(btn=>{
 syncPresetActive();
 
 // ---------- Live gold plaque preview (one plaque per bed) ----------
+// One field, typed exactly as it should be engraved ("Maria & John",
+// "A, B & C", a family name...). The text auto-shrinks so it never
+// touches the plaque edges.
 const recogInput = document.getElementById('recogName');
 const recogNameLabel = document.getElementById('recogNameLabel');
 const sameNameRow = document.getElementById('sameNameRow');
@@ -1672,20 +1811,24 @@ const sameNameAllCheckbox = document.getElementById('sameNameAll');
 const individualNamesWrap = document.getElementById('individualNamesWrap');
 const plaqueWrap = document.getElementById('plaqueWrap');
 
-function fitPlaqueText(el, text){
-  const len = text.length;
-  let size;
-  if(len <= 14) size = 20;
-  else if(len <= 20) size = 17;
-  else if(len <= 26) size = 15;
-  else if(len <= 34) size = 12.5;
-  else if(len <= 44) size = 10.5;
-  else size = 9;
+// Canonical string used everywhere: plaque, PDF, email, filename.
+function combinedRecogName(){
+  return recogInput.value.trim();
+}
+
+// Shrink an element's font until it fits its box — the plaque text never
+// overflows, it just scales down gracefully.
+function fitPlaqueText(el, maxWidth, maxHeight, maxSize, minSize){
+  let size = maxSize;
   el.style.fontSize = size + 'px';
+  while(size > minSize && (el.scrollWidth > maxWidth || el.scrollHeight > maxHeight)){
+    size -= 0.5;
+    el.style.fontSize = size + 'px';
+  }
 }
 
 function getIndividualInputs(){
-  return Array.from(individualNamesWrap.querySelectorAll('input[data-plaque-index]'));
+  return Array.from(individualNamesWrap.querySelectorAll('[data-plaque-index]'));
 }
 
 // Build one text input per additional bed (bed 1 uses the main recogName field).
@@ -1702,11 +1845,12 @@ function renderIndividualInputs(beds){
     const label = document.createElement('label');
     label.setAttribute('for', 'recogName_' + i);
     label.textContent = 'Plaque ' + i + ' name';
-    const input = document.createElement('input');
-    input.type = 'text';
+    const input = document.createElement('textarea');
+    input.rows = 2;
+    input.style.resize = 'vertical';
     input.id = 'recogName_' + i;
     input.dataset.plaqueIndex = i;
-    input.placeholder = 'e.g. The Sharma Family';
+    input.placeholder = 'e.g. The Sharma Family or Rama & Sai';
     input.value = existingValues[i] || '';
     // Only refresh the gold-plaque previews on keystroke — never rebuild the inputs themselves
     input.addEventListener('input', updatePlaqueVisuals);
@@ -1732,7 +1876,7 @@ function ensureIndividualInputs(beds, showIndividual){
 }
 
 function getPlaqueNames(beds){
-  const primary = recogInput.value.trim() || 'Your Name / Organisation';
+  const primary = combinedRecogName() || 'Your Name / Organisation';
   if(sameNameAllCheckbox.checked){
     return Array(beds).fill(primary);
   }
@@ -1754,14 +1898,22 @@ function updatePlaqueVisuals(){
   names.forEach(function(name, idx){
     const plaque = document.createElement('div');
     plaque.className = 'gold-plaque';
+
     const sup = document.createElement('div');
     sup.className = 'gp-supported';
     sup.textContent = 'Supported by';
-    const nameEl = document.createElement('div');
-    nameEl.className = 'gp-name';
-    nameEl.textContent = name;
     plaque.appendChild(sup);
-    plaque.appendChild(nameEl);
+
+    // The names are one centred, wrapping block ("A, B & C") that auto-shrinks
+    // so long entries scale down instead of clipping.
+    const nameBlock = document.createElement('div');
+    nameBlock.className = 'gp-names';
+    const textEl = document.createElement('div');
+    textEl.className = 'gp-nameblock';
+    textEl.textContent = name;
+    nameBlock.appendChild(textEl);
+    plaque.appendChild(nameBlock);
+
     if(names.length > 1){
       const tag = document.createElement('div');
       tag.className = 'gp-bed-tag';
@@ -1769,8 +1921,32 @@ function updatePlaqueVisuals(){
       plaque.appendChild(tag);
     }
     plaqueWrap.appendChild(plaque);
-    fitPlaqueText(nameEl, name);
   });
+  // Fit each plaque's text once layout has settled.
+  requestAnimationFrame(function(){
+    plaqueWrap.querySelectorAll('.gold-plaque').forEach(function(plaque){
+      const nameBlock = plaque.querySelector('.gp-names');
+      const textEl = plaque.querySelector('.gp-nameblock');
+      if(!nameBlock || !textEl) return;
+      fitPlaqueText(textEl, nameBlock.clientWidth, Math.max(nameBlock.clientHeight, 10), 26, 7);
+    });
+    updateBedPlaqueOverlay();
+  });
+}
+
+// The bed photo's plaque uses the SAME name as plaque 1 (the main recognition
+// field) — it's a single physical bed shown for illustration, not one plaque
+// per pledged bed. Text auto-shrinks the same way the gold plaque preview does.
+function updateBedPlaqueOverlay(){
+  const overlay = document.getElementById('bedPlaqueOverlay');
+  const labelEl = document.getElementById('bedPlaqueLabel');
+  const nameEl = document.getElementById('bedPlaqueName');
+  if(!overlay || !labelEl || !nameEl) return;
+  const w = overlay.clientWidth, h = overlay.clientHeight;
+  if(w < 4 || h < 4) return; // image not laid out yet
+  labelEl.style.fontSize = Math.max(w*0.05, 5) + 'px';
+  nameEl.textContent = combinedRecogName() || 'Your Name / Organisation';
+  fitPlaqueText(nameEl, w*0.9, h*0.6, w*0.12, w*0.025);
 }
 
 // Full refresh: label text + checkbox visibility + which inputs exist + the plaque previews.
@@ -1800,7 +1976,31 @@ recogInput.addEventListener('input', updatePlaqueVisuals);
 sameNameAllCheckbox.addEventListener('change', renderPlaques);
 bedCount.addEventListener('input', renderPlaques);
 presetBtns.forEach(function(btn){ btn.addEventListener('click', renderPlaques); });
+window.addEventListener('resize', updatePlaqueVisuals);
+window.addEventListener('load', updateBedPlaqueOverlay);
 renderPlaques();
+
+// ---------- Plaque preview PNG download ----------
+document.getElementById('plaquePngBtn').addEventListener('click', function(){
+  if(!window.html2canvas){
+    alert('The image library is still loading, please try again in a moment.');
+    return;
+  }
+  const btn = this;
+  const original = btn.textContent;
+  btn.textContent = 'Preparing image\u2026';
+  btn.disabled = true;
+  html2canvas(plaqueWrap, {scale:4, backgroundColor:null}).then(function(canvas){
+    const link = document.createElement('a');
+    const base = (combinedRecogName() || 'plaque').replace(/[^a-z0-9]+/gi,'-');
+    link.download = 'ICU-Bed-Plaque-' + base + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }).finally(function(){
+    btn.textContent = original;
+    btn.disabled = false;
+  });
+});
 
 // ---------- Drawn signature (canvas) ----------
 const sigCanvas = document.getElementById('sigCanvas');
@@ -1808,10 +2008,15 @@ const sigCtx = sigCanvas.getContext('2d');
 let sigHasDrawing = false;
 let sigDrawing = false;
 
+let sigLastWidth = 0;
 function sigResize(){
   if(!sigCtx) return;
-  const ratio = window.devicePixelRatio || 1;
   const rect = sigCanvas.getBoundingClientRect();
+  // Mobile keyboards fire resize on open/close without changing the canvas
+  // width — re-initialising then would silently erase the drawn signature.
+  if(Math.abs(rect.width - sigLastWidth) < 1) return;
+  sigLastWidth = rect.width;
+  const ratio = window.devicePixelRatio || 1;
   sigCanvas.width = rect.width * ratio;
   sigCanvas.height = rect.height * ratio;
   sigCtx.scale(ratio, ratio);
@@ -1867,7 +2072,7 @@ function collectPledge(){
     address: document.getElementById('address').value.trim(),
     mobile: document.getElementById('mobile').value.trim(),
     email: document.getElementById('email').value.trim(),
-    recog: document.getElementById('recogName').value.trim(),
+    recog: combinedRecogName(),
     plaqueNames: getPlaqueNames(beds),
     sameNameAll: sameNameAllCheckbox.checked,
     typedSig: document.getElementById('signature').value.trim(),
@@ -1894,16 +2099,18 @@ async function getLogoDataUrl(){
   }catch(e){ return null; }
 }
 
-async function generatePledgePdf(){
+// Builds the pledge PDF and returns {doc, fname} without saving it anywhere —
+// callers decide whether to download it, share/attach it, or both.
+async function buildPledgePdfDoc(){
   if(!window.jspdf || !window.jspdf.jsPDF){
     alert('The PDF library is still loading, please try again in a moment.');
-    return false;
+    return null;
   }
   const d = collectPledge();
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({unit:'mm', format:'a4'});
   const W = 210, H = 297, M = 20;
-  const RED = [126,35,32], CHAR = [45,45,45], GRAY = [86,86,86], CREAM = [252,251,242], GOLD = [205,161,68];
+  const RED = [126,35,32], CHAR = [45,45,45], GRAY = [86,86,86], CREAM = [252,251,242], GOLD = [211,181,112];
   const BOTTOM = 278; // lowest y content may reach before forcing a new page
   const FOOTER_H = 34; // vertical space the closing quote block needs
 
@@ -2000,34 +2207,65 @@ async function generatePledgePdf(){
   doc.setDrawColor(...RED); doc.line(M, y+2, W-M, y+2);
   y += 8;
 
-  const many = d.plaqueNames.length > 4;
-  const boxW = many ? 39 : 52, boxH = many ? 20 : 26, gapX = 5, gapY = 5;
+  // Plaque boxes are drawn at the plate's real 10in x 3.5in proportion (height = width x 0.35).
+  // 1 plaque: one large plate. 2-4: two per row. 5+: three per row.
+  const count = d.plaqueNames.length;
+  const boxW = count === 1 ? 77 : (count <= 4 ? 56 : 38);
+  const boxH = Math.round(boxW * 0.35 * 10) / 10;
+  const gapX = 5, gapY = count > 1 ? 8 : 5;
   const perRow = Math.max(1, Math.floor((W - 2*M + gapX) / (boxW + gapX)));
-  const totalRows = Math.ceil(d.plaqueNames.length / perRow);
+  const totalRows = Math.ceil(count / perRow);
+  // Font sizes scale with the plate width so the layout stays proportionate.
+  const fs = boxW / 110;
+
+  // The names are one centred, wrapping block ("A, B & C") that auto-shrinks
+  // until every line fits inside the plate — mirrors the on-page preview.
+  function drawPlaqueNames(name, bx, by){
+    const cx = bx + boxW/2;
+    const innerW = boxW * 0.86;
+    const topY = by + boxH * 0.26;   // just below the label
+    const availH = boxH * 0.66;
+    let size = 26 * fs;
+    const minSize = 4.5;
+    let lines, lineH, blockH;
+    doc.setFont('helvetica','bold');
+    while(true){
+      doc.setFontSize(size);
+      lines = doc.splitTextToSize(name || '-', innerW);
+      lineH = size * 0.3528 * 1.22;   // pt -> mm, plus line-height
+      blockH = lines.length * lineH;
+      const tooWide = lines.some(function(l){ return doc.getTextWidth(l) > innerW; });
+      if((blockH <= availH && !tooWide) || size <= minSize) break;
+      size -= 0.5;
+    }
+    doc.setTextColor(126,35,32);
+    let ty = topY + (availH - blockH)/2 + lineH * 0.78;
+    lines.forEach(function(l){
+      doc.text(l, cx, ty, {align:'center'});
+      ty += lineH;
+    });
+  }
 
   for(let row = 0; row < totalRows; row++){
-    y = ensureSpace(y, boxH, 'Recognition plaques (continued)');
+    y = ensureSpace(y, boxH + (count > 1 ? 5 : 0), 'Recognition plaques (continued)');
     for(let col = 0; col < perRow; col++){
       const idx = row*perRow + col;
-      if(idx >= d.plaqueNames.length) break;
+      if(idx >= count) break;
       const name = d.plaqueNames[idx];
-      const bx = M + col*(boxW+gapX), by = y;
+      const bx = M + col*(boxW+gapX), by = y, cx = bx + boxW/2;
+      // Plain soft-gold plate — no border, no keyline, no underline; matches
+      // the on-screen preview exactly.
       doc.setFillColor(...GOLD);
-      doc.setDrawColor(166,124,46); doc.setLineWidth(0.7);
-      doc.roundedRect(bx, by, boxW, boxH, 2, 2, 'FD');
-      doc.setTextColor(90,64,20);
-      doc.setFont('helvetica','normal'); doc.setFontSize(many ? 6 : 8);
-      doc.text('SUPPORTED BY', bx+boxW/2, by+(many?6:8), {align:'center'});
-      doc.setFont('helvetica','bold');
-      let plaqueSize = many ? 9 : 14;
-      if(name.length > 20) plaqueSize = many ? 7 : 11;
-      if(name.length > 32) plaqueSize = many ? 6 : 9;
-      doc.setFontSize(plaqueSize);
-      const nameLines = doc.splitTextToSize(name || '-', boxW-6);
-      doc.text(nameLines, bx+boxW/2, by+(many?12:18), {align:'center'});
-      if(d.plaqueNames.length > 1){
+      doc.roundedRect(bx, by, boxW, boxH, boxW*0.03, boxW*0.03, 'F');
+      // "SUPPORTED BY" label tucked at the top — the donor's name is the
+      // hero and owns everything beneath it.
+      doc.setTextColor(126,35,32);
+      doc.setFont('helvetica','normal'); doc.setFontSize(Math.max(8*fs, 4.5));
+      doc.text('SUPPORTED BY', cx, by + boxH*0.16, {align:'center'});
+      drawPlaqueNames(name, bx, by);
+      if(count > 1){
         doc.setTextColor(...GRAY); doc.setFont('helvetica','normal'); doc.setFontSize(6);
-        doc.text('Bed ' + (idx+1), bx+boxW/2, by+boxH+3.5, {align:'center'});
+        doc.text('Bed ' + (idx+1), cx, by + boxH + 3.5, {align:'center'});
       }
     }
     y += boxH + gapY;
@@ -2078,8 +2316,33 @@ async function generatePledgePdf(){
   }
 
   const fname = 'ICU-Bed-Pledge-' + (d.recog || d.donor || 'donor').replace(/[^a-z0-9]+/gi,'-') + '.pdf';
+  return {doc, fname};
+}
+
+// Downloads the PDF to the device (used by both buttons).
+function downloadPledgePdf(doc, fname){
   doc.save(fname);
-  return true;
+}
+
+// Tries to hand the PDF to the OS share sheet as a real file attachment
+// (works on most modern mobile browsers). Returns true if a share sheet was
+// successfully presented — the caller should NOT also fall back to mailto
+// in that case, since the person is already mid-share. Returns false if the
+// platform can't share files at all, so the caller can fall back cleanly.
+async function sharePledgePdf(doc, fname, subject, body){
+  try{
+    if(!navigator.canShare || !navigator.share) return false;
+    const blob = doc.output('blob');
+    const file = new File([blob], fname, {type:'application/pdf'});
+    if(!navigator.canShare({files:[file]})) return false;
+    await navigator.share({files:[file], title:subject, text:body});
+    return true;
+  }catch(e){
+    // AbortError = the person cancelled the share sheet themselves; treat
+    // that as handled (don't also pop open a mailto behind their back).
+    if(e && e.name === 'AbortError') return true;
+    return false;
+  }
 }
 
 // ---------- Build pledge text (shared by mailto submit) ----------
@@ -2090,13 +2353,13 @@ function buildPledge(){
   const address = document.getElementById('address').value.trim();
   const mobile = document.getElementById('mobile').value.trim();
   const email = document.getElementById('email').value.trim();
-  const recog = document.getElementById('recogName').value.trim();
+  const recog = combinedRecogName();
   const plaqueNames = getPlaqueNames(beds);
   const typedSig = document.getElementById('signature').value.trim();
   const sig = typedSig || (sigHasDrawing ? 'Signed by hand (drawn signature captured)' : '');
   const date = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'long', year:'numeric'});
 
-  const subject = 'ICU Bed Sponsorship Pledge - ' + recog;
+  const subject = 'ICU Bed Sponsorship Pledge - ' + recog.replace(/\s*\n\s*/g, ' / ');
   const bedWord = beds === 1 ? 'bed' : 'beds';
   const body = [
     'Dear team,',
@@ -2116,7 +2379,9 @@ function buildPledge(){
     'Email: ' + email,
     '',
     (plaqueNames.length > 1
-      ? 'Recognition names (one plaque per bed):\n' + plaqueNames.map(function(n,i){ return '  Bed ' + (i+1) + ': ' + n; }).join('\n')
+      ? (plaqueNames.length <= 15
+          ? 'Recognition names (one plaque per bed):\n' + plaqueNames.map(function(n,i){ return '  Bed ' + (i+1) + ': ' + n; }).join('\n')
+          : 'Recognition names: ' + plaqueNames.length + ' plaques - full per-bed list is in the attached PDF.')
       : 'Recognition name (plaque): ' + recog),
     '',
     'Digital signature: ' + sig,
@@ -2140,7 +2405,24 @@ function signatureOk(){
   return true;
 }
 
-// ---------- Submit -> pledge PDF download + mailto ----------
+// ---------- Download pledge (PDF only, no email) ----------
+document.getElementById('downloadPledgeBtn').addEventListener('click', async function(){
+  const form = document.getElementById('pledgeForm');
+  if(!form.reportValidity()) return; // shows the browser's native required-field messages
+  if(!signatureOk()) return;
+  const btn = this;
+  const original = btn.textContent;
+  btn.textContent = 'Preparing PDF\u2026';
+  btn.disabled = true;
+  try{
+    const built = await buildPledgePdfDoc();
+    if(built) downloadPledgePdf(built.doc, built.fname);
+  } finally {
+    setTimeout(function(){ btn.textContent = original; btn.disabled = false; }, 800);
+  }
+});
+
+// ---------- Submit pledge -> PDF attached via share sheet, or download + mailto ----------
 document.getElementById('pledgeForm').addEventListener('submit', async function(e){
   e.preventDefault();
   if(!signatureOk()) return;
@@ -2149,10 +2431,15 @@ document.getElementById('pledgeForm').addEventListener('submit', async function(
   btn.textContent = 'Preparing your pledge\u2026';
   btn.disabled = true;
   try{
-    const ok = await generatePledgePdf();
-    if(ok){
-      const {subject, body} = buildPledge();
-      // small delay so the download starts before the mail client takes focus
+    const built = await buildPledgePdfDoc();
+    if(!built) return;
+    const {subject, body} = buildPledge();
+    const shared = await sharePledgePdf(built.doc, built.fname, subject, body);
+    if(!shared){
+      // Fallback for browsers that can't attach files directly: download the
+      // PDF, then open the mail client with everything pre-filled so the
+      // person only has to attach the file they just downloaded.
+      downloadPledgePdf(built.doc, built.fname);
       setTimeout(function(){
         window.location.href = 'mailto:capex@ssslsg.org?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
       }, 600);
