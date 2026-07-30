@@ -1,647 +1,2457 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fund Utilisation Report | One World One Family Mission</title>
+<title>ICU Healing Beds | One World One Family Mission</title>
+<meta name="description" content="Sponsor a fully equipped ICU Healing Bed at Sri Madhusudan Sai Institute of Medical Sciences and Research. 130 beds. Free critical care, forever.">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<!-- TODO: replace https://example.org/icu-healing-beds with the final hosted URL in the 4 tags below -->
+<link rel="canonical" href="https://example.org/icu-healing-beds">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://example.org/icu-healing-beds">
+<meta property="og:title" content="ICU Healing Beds | Sponsor a bed, save lives for decades">
+<meta property="og:description" content="Sponsor a fully equipped ICU Healing Bed at Sri Madhusudan Sai Institute of Medical Sciences and Research. 130 beds. Free critical care, forever.">
+<meta property="og:image" content="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Front%20Image.jpg">
+<meta property="og:site_name" content="One World One Family Mission">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ICU Healing Beds | Sponsor a bed, save lives for decades">
+<meta name="twitter:description" content="130 fully equipped ICU beds. Free critical care, forever. Sponsor one today.">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Front%20Image.jpg">
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/OWOF_LOGO_V_RED_DIGITAL_web600.png">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/OWOF_LOGO_V_RED_DIGITAL_web600.png">
+
+<!-- Preload the two above-the-fold critical fonts -->
+<link rel="preload" as="font" type="font/ttf" crossorigin href="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Gantari-ExtraBold.ttf">
+<link rel="preload" as="font" type="font/ttf" crossorigin href="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Gentium-Regular.ttf">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NGO",
+  "name": "One World One Family Mission",
+  "slogan": "The world is one family, and no one should be denied life's basic needs.",
+  "url": "https://example.org/icu-healing-beds",
+  "logo": "https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/OWOF_LOGO_H_RED_DIGITAL_web600.png",
+  "email": "capex@ssslsg.org",
+  "potentialAction": {
+    "@type": "DonateAction",
+    "name": "Sponsor an ICU Healing Bed",
+    "description": "Sponsor a fully equipped ICU bed ($28,000 USD / \u20b925,00,000 INR) at Sri Madhusudan Sai Institute of Medical Sciences and Research.",
+    "recipient": {
+      "@type": "MedicalOrganization",
+      "name": "Sri Madhusudan Sai Institute of Medical Sciences and Research"
+    }
+  }
+}
+</script>
+
+<!-- jsPDF for client-side pledge PDF generation -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-
+<!-- html2canvas for plaque-preview PNG download -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 <style>
+
+/* ============ FONTS ============ */
 @font-face{font-family:"Gantari";src:url("https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Gantari-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap;}
 @font-face{font-family:"Gantari";src:url("https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Gantari-SemiBold.ttf") format("truetype");font-weight:600;font-style:normal;font-display:swap;}
 @font-face{font-family:"Gantari";src:url("https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Gantari-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap;}
+@font-face{font-family:"Gantari";src:url("https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Gantari-ExtraBold.ttf") format("truetype");font-weight:800;font-style:normal;font-display:swap;}
+@font-face{font-family:"Gantari";src:url("https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Gantari-Black.ttf") format("truetype");font-weight:900;font-style:normal;font-display:swap;}
 @font-face{font-family:"Gentium";src:url("https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Gentium-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap;}
 @font-face{font-family:"Gentium";src:url("https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Gentium-Italic.ttf") format("truetype");font-weight:400;font-style:italic;font-display:swap;}
-@font-face{font-family:"Gentium";src:url("https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Gentium-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap;}
+@font-face{font-family:"Gentium";src:url("https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Gentium-SemiBold.ttf") format("truetype");font-weight:600 700;font-style:normal;font-display:swap;}
 
 :root{
-  --ink:#241f1c;
-  --ink-soft:#5b534c;
-  --brick:#7e2320;
-  --brick-deep:#4a1513;
-  --brass:#a67c2e;
-  --brass-deep:#7d5c20;
-  --paper:#fbf8ef;
-  --paper-shade:#efe8d6;
-  --hair:rgba(36,31,28,0.18);
-  --hair-soft:rgba(36,31,28,0.10);
-  --green:#3d6b47;
+  --red:#7e2320;
+  --red-bright:#a32d29;
+  --maroon-deep:#3a1210;
+  --charcoal:#2d2d2d;
+  --gray:#565656;
+  --cream:#fcfbf2;
+  --cream-dim:#f3f0e4;
+  --line:rgba(45,45,45,0.14);
+  --gold-1:#f4e2a8; --gold-2:#cda144; --gold-3:#a67c2e; --gold-edge:#8a672a;
 }
+
 *{box-sizing:border-box; margin:0; padding:0;}
 html{scroll-behavior:smooth;}
 body{
   font-family:"Gentium", serif;
-  background:#c9c0a8;
-  color:var(--ink);
+  background:var(--cream);
+  color:var(--charcoal);
+  overflow-x:hidden;
   line-height:1.6;
-  -webkit-font-smoothing:antialiased;
 }
-h1,h2,h3{font-family:"Gentium",serif;}
-.label,.eyebrow,.num-font{font-family:"Gantari",sans-serif;}
-.tab{font-variant-numeric:tabular-nums;}
+h1,h2,h3,h4,.eyebrow,.label,button,.nav-link,.stat-num{font-family:"Gantari", sans-serif;}
+a{color:inherit;}
+img{max-width:100%; display:block;}
+.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0);}
+:focus-visible{outline:2px solid var(--red); outline-offset:2px;}
 
-/* ============ TOOLBAR (utility chrome, not part of the report) ============ */
-.toolbar{
-  position:fixed; top:0; left:0; width:100%; z-index:50;
-  display:flex; align-items:center; justify-content:space-between; gap:14px;
-  padding:13px 5vw; background:var(--ink);
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
 }
-.toolbar .tb-label{font-family:"Gantari",sans-serif; font-size:11.5px; color:rgba(251,248,239,0.65); letter-spacing:.04em;}
-.download-btn{
-  display:inline-flex; align-items:center; gap:9px; background:var(--brass); color:var(--ink);
-  font-family:"Gantari",sans-serif; font-weight:700; font-size:12px; letter-spacing:.05em;
-  text-transform:uppercase; padding:10px 20px; border:none; border-radius:2px; cursor:pointer;
+
+/* ============ ECG SCROLL PROGRESS ============ */
+#ecg-progress{
+  position:fixed; top:0; left:0; width:100%; height:46px; z-index:999;
+  background:var(--cream);
+  border-bottom:1px solid var(--line);
+}
+#ecg-progress svg{width:100%; height:100%; display:block;}
+#ecg-track{fill:none; stroke:rgba(45,45,45,0.12); stroke-width:2;}
+#ecg-fill{fill:none; stroke:var(--red); stroke-width:2.4; filter:drop-shadow(0 0 3px rgba(126,35,32,0.35));}
+#ecg-dot{fill:var(--red); filter:drop-shadow(0 0 4px rgba(126,35,32,0.5));}
+#ecg-pct{
+  position:absolute; right:20px; top:50%; transform:translateY(-50%);
+  font-size:10px; letter-spacing:.14em; color:var(--gray); opacity:.8; text-transform:uppercase;
+  font-family:"Gantari",sans-serif;
+}
+#ecg-heart{
+  position:absolute; right:88px; top:50%;
+  transform:translateY(-50%) scale(0); opacity:0;
+  width:20px; height:20px; color:var(--red);
+  transition:opacity .35s ease, transform .35s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;
+}
+#ecg-heart svg{width:100%; height:100%; display:block; filter:drop-shadow(0 0 4px rgba(126,35,32,0.5));}
+#ecg-heart.show{opacity:1; transform:translateY(-50%) scale(1); animation:ecgHeartBeat 1.1s ease-in-out infinite .35s;}
+@keyframes ecgHeartBeat{
+  0%,100%{transform:translateY(-50%) scale(1);}
+  20%{transform:translateY(-50%) scale(1.22);}
+  35%{transform:translateY(-50%) scale(0.94);}
+  50%{transform:translateY(-50%) scale(1.12);}
+  70%{transform:translateY(-50%) scale(1);}
+}
+
+/* ============ NAV ============ */
+header.site-nav{
+  position:fixed; top:46px; left:0; width:100%; z-index:998;
+  display:flex; align-items:center; justify-content:space-between; gap:20px;
+  padding:12px 5vw;
+  background:rgba(252,251,242,0.9);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+  transition:transform .4s ease;
+}
+header.site-nav img.nav-logo{height:58px !important; width:auto !important; max-width:175px !important;}
+nav.nav-links{display:flex; gap:26px; align-items:center;}
+.nav-link{
+  font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; font-weight:600;
+  text-decoration:none; color:var(--charcoal); position:relative; padding:4px 0;
+}
+.nav-link::after{
+  content:""; position:absolute; left:0; bottom:0; width:0; height:2px; background:var(--red);
+  transition:width .25s ease;
+}
+.nav-link:hover::after{width:100%;}
+header.site-nav .nav-cta{
+  font-size:12px; letter-spacing:.1em; text-transform:uppercase; font-weight:700;
+  background:var(--red); color:var(--cream); padding:11px 22px; border-radius:2px;
+  text-decoration:none; transition:background .25s ease; white-space:nowrap;
+  font-family:"Gantari",sans-serif;
+}
+header.site-nav .nav-cta:hover{background:var(--red-bright);}
+@media (max-width:820px){
+  nav.nav-links{display:none;}
+  header.site-nav img.nav-logo{height:48px !important; max-width:145px !important;}
+}
+
+/* Sticky mobile CTA */
+#mobile-cta{
+  display:none; position:fixed; bottom:0; left:0; width:100%; z-index:997;
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  background:rgba(252,251,242,0.95); backdrop-filter:blur(8px);
+  border-top:1px solid var(--line);
+}
+#mobile-cta a{
+  display:block; text-align:center; background:var(--red); color:var(--cream);
+  font-family:"Gantari",sans-serif; font-weight:700; font-size:13px; letter-spacing:.08em;
+  text-transform:uppercase; padding:14px; border-radius:3px; text-decoration:none;
+}
+@media (max-width:640px){ #mobile-cta.show{display:block;} body{padding-bottom:0;} }
+
+/* ============ HERO ============ */
+.hero{
+  position:relative; min-height:100vh; display:flex; align-items:center;
+  padding:200px 6vw 90px;
+  background:
+    radial-gradient(ellipse at 15% -10%, rgba(126,35,32,0.10), transparent 55%),
+    var(--cream);
+  overflow:hidden;
+}
+.hero-institute{
+  font-family:"Gantari",sans-serif; font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
+  font-weight:600; color:var(--gray); margin:-14px 0 32px;
+}
+.hero-inner{
+  max-width:1180px; margin:0 auto; width:100%;
+  display:grid; grid-template-columns:1.05fr 0.95fr; gap:64px; align-items:center;
+}
+.eyebrow{
+  font-size:11px; letter-spacing:.18em; text-transform:uppercase; font-weight:700;
+  color:var(--red); margin-bottom:22px; display:inline-flex; align-items:center; gap:10px;
+}
+.pulse-dot{
+  width:8px; height:8px; border-radius:50%; background:var(--red); display:inline-block;
+  animation:pulseDot 1.4s infinite ease-in-out; flex-shrink:0;
+}
+@keyframes pulseDot{
+  0%,100%{transform:scale(1); opacity:1;}
+  50%{transform:scale(1.6); opacity:.45;}
+}
+h1.hero-title{
+  font-size:clamp(36px,5.4vw,68px); font-weight:900; line-height:0.98; letter-spacing:-0.01em;
+  color:var(--charcoal); margin-bottom:34px;
+}
+h1.hero-title em{font-style:normal; color:var(--red); white-space:nowrap;}
+.hero-sub{
+  font-size:clamp(16px,1.8vw,19px); color:var(--gray);
+  max-width:520px; margin-bottom:32px; line-height:1.65;
+}
+.hero-ecg-wrap{width:100%; max-width:460px; height:56px; margin-bottom:36px; opacity:.9;}
+#hero-ecg-path{stroke-dasharray:1400; stroke-dashoffset:1400; animation:drawEcg 2.6s ease forwards .3s;}
+@keyframes drawEcg{to{stroke-dashoffset:0;}}
+.hero-cta-row{display:flex; gap:16px; flex-wrap:wrap;}
+.btn-primary{
+  background:var(--red); color:var(--cream); font-weight:700; font-size:13px;
+  letter-spacing:.08em; text-transform:uppercase; padding:16px 34px; border:none;
+  border-radius:2px; cursor:pointer; text-decoration:none; display:inline-block;
+  font-family:"Gantari",sans-serif;
+  transition:transform .25s ease, background .25s ease, box-shadow .25s ease;
+  box-shadow:0 8px 24px -8px rgba(126,35,32,0.5);
+}
+.btn-primary:hover{background:var(--red-bright); transform:translateY(-2px); box-shadow:0 12px 30px -8px rgba(126,35,32,0.6);}
+.btn-ghost{
+  background:transparent; color:var(--charcoal); font-weight:700; font-size:13px;
+  letter-spacing:.08em; text-transform:uppercase; padding:16px 30px; border:1px solid var(--line);
+  border-radius:2px; cursor:pointer; text-decoration:none; display:inline-block;
+  font-family:"Gantari",sans-serif;
+  transition:border-color .25s ease, background .25s ease;
+}
+.btn-ghost:hover{border-color:var(--red); background:rgba(126,35,32,0.05);}
+.hero-mini-stats{
+  display:grid; grid-template-columns:repeat(2, 1fr); gap:28px;
+  margin-top:44px; padding-top:26px; border-top:1px solid var(--line);
+}
+.hms .n{font-family:"Gantari",sans-serif; font-weight:800; font-size:24px; color:var(--red); line-height:1;}
+.hms .l{font-size:12.5px; color:var(--gray); margin-top:5px;}
+@media (max-width:480px){ .hero-mini-stats{grid-template-columns:1fr; gap:18px;} }
+
+.hero-visual{position:relative;}
+.hero-photo-card{
+  background:#fff; border:1px solid var(--line); border-radius:8px; padding:16px;
+  box-shadow:0 40px 80px -40px rgba(45,45,45,0.45);
+  transform:rotate(0.6deg);
+}
+.hero-photo-card img{border-radius:4px; width:100%; height:auto; display:block;}
+.hero-photo-card .cap{
+  display:block; margin-top:14px; text-align:center; color:var(--gray);
+  font-size:11px; letter-spacing:.12em; text-transform:uppercase; font-weight:700;
+  font-family:"Gantari",sans-serif;
+}
+
+/* Staged hero entrance */
+.hero-copy > *, .hero-visual{opacity:0; transform:translateY(18px); animation:heroIn .8s ease forwards;}
+.hero-copy .eyebrow{animation-delay:.05s;}
+.hero-copy h1{animation-delay:.15s;}
+.hero-copy .hero-sub{animation-delay:.3s;}
+.hero-copy .hero-institute{animation-delay:.4s;}
+.hero-copy .hero-ecg-wrap{animation-delay:.5s;}
+.hero-copy .hero-cta-row{animation-delay:.6s;}
+.hero-copy .hero-mini-stats{animation-delay:.75s;}
+.hero-visual{animation-delay:.35s;}
+@keyframes heroIn{to{opacity:1; transform:translateY(0);}}
+h1.hero-title em::after{
+  content:""; display:block; height:4px; background:var(--red); border-radius:2px;
+  margin-top:12px;
+  transform:scaleX(0); transform-origin:left; animation:underlineIn .7s ease forwards 1.1s;
+}
+@keyframes underlineIn{to{transform:scaleX(1);}}
+@media (max-width:920px){
+  .hero{padding-top:150px;}
+  .hero-inner{grid-template-columns:1fr; gap:48px;}
+  .hero-visual{max-width:480px;}
+}
+
+/* ============ SECTION GENERAL ============ */
+section{padding:110px 6vw; position:relative;}
+.section-inner{max-width:1180px; margin:0 auto;}
+.section-head{max-width:680px; margin-bottom:64px;}
+h2.section-title{font-size:clamp(28px,4vw,42px); font-weight:800; color:var(--charcoal); line-height:1.05; margin-bottom:18px;}
+.section-head p{color:var(--gray); font-size:17px;}
+.reveal{opacity:0; transform:translateY(28px); transition:opacity .8s ease, transform .8s ease;}
+.reveal.in-view{opacity:1; transform:translateY(0);}
+.section-dark{background:var(--cream-dim);}
+
+/* ============ NEED SECTION ============ */
+.need-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1px; background:var(--line); border:1px solid var(--line);}
+.need-card{background:var(--cream-dim); padding:38px 32px; transition:background .3s ease, transform .3s ease;}
+.need-card:hover{background:#fff; transform:translateY(-4px);}
+.need-card .tag{font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--red); font-weight:700; margin-bottom:16px; display:block; font-family:"Gantari",sans-serif;}
+.need-card h3{font-size:20px; font-weight:700; margin-bottom:12px;}
+.need-card p{color:var(--gray); font-size:15px;}
+
+.stat-num{font-size:clamp(34px,4vw,52px); font-weight:900; color:var(--red); line-height:1; margin-bottom:10px;}
+.stat-label{font-size:13px; color:var(--gray); max-width:220px;}
+
+/* Mismatch illustration */
+.mismatch{margin-top:70px; border-top:1px solid var(--line); padding-top:44px;}
+.mismatch-head{display:flex; justify-content:space-between; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:28px;}
+.mismatch-head h3{font-size:19px; font-weight:700;}
+.mm-row{margin-bottom:26px;}
+.mm-label{
+  display:flex; align-items:center; gap:10px; margin-bottom:10px;
+  font-family:"Gantari",sans-serif; font-size:12px; letter-spacing:.1em; text-transform:uppercase;
+  font-weight:700; color:var(--charcoal);
+}
+.mm-label svg{width:20px; height:20px; color:var(--red); flex-shrink:0;}
+.mm-bar{
+  display:flex; align-items:stretch; height:56px; border:1px solid var(--line);
+  border-radius:5px; overflow:hidden; background:#fff;
+}
+.mm-fill{
+  width:0%; display:flex; align-items:center; gap:10px; padding:0 16px;
+  transition:width 1.6s cubic-bezier(.2,.8,.2,1); min-width:0; overflow:hidden; white-space:nowrap;
+}
+.mm-fill.rural{background:linear-gradient(90deg,#7e2320,#a32d29); color:var(--cream);}
+.mm-pct{font-family:"Gantari",sans-serif; font-weight:900; font-size:22px;}
+@media (max-width:560px){ .mm-pct{font-size:16px;} .mm-fill{padding:0 10px; gap:6px;} .mm-cap{display:none;} }
+.mm-cap{font-family:"Gantari",sans-serif; font-size:11px; letter-spacing:.1em; text-transform:uppercase; font-weight:700; opacity:.85;}
+.mm-rest{
+  flex:1; display:flex; align-items:center; justify-content:flex-end; padding:0 16px;
+  font-family:"Gantari",sans-serif; font-size:12px; font-weight:600; color:var(--gray); white-space:nowrap;
+}
+.mm-note{font-size:16px; color:var(--charcoal); margin-top:8px; max-width:640px;}
+
+/* ============ JOURNEY ============ */
+section#journey{padding-top:100px; padding-bottom:100px;}
+.journey-header{max-width:760px; margin-bottom:64px;}
+.journey-header h2.section-title{font-size:clamp(32px,4.5vw,52px); margin-bottom:0;}
+.journey-layout{display:grid; grid-template-columns:0.85fr 1.15fr; gap:70px; align-items:start;}
+.journey-media{
+  position:sticky; top:130px;
+  background:#fff; border:1px solid var(--line); border-radius:8px; padding:22px;
+  box-shadow:0 30px 60px -34px rgba(45,45,45,0.35);
+}
+.journey-media img{width:100%; height:auto; border-radius:4px; display:block;}
+.bed-photo-wrap{position:relative;}
+.bed-photo-wrap img{width:100%; height:auto; border-radius:4px; display:block;}
+/* Positioned to match the physical plaque's exact location on the bed photo
+   (measured directly from the reference photo, as a % of the image box so
+   it tracks correctly at any display size). */
+.bed-plaque-overlay{
+  position:absolute; left:39.24%; top:70.68%; width:20.34%; height:4.99%;
+  border-radius:5%;
+  background:
+    repeating-linear-gradient(0deg,
+      rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px,
+      rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 3px),
+    linear-gradient(135deg,
+      #b08d3b 0%, #cfae5e 18%, #e3cd8f 38%, #c5a04a 55%,
+      #dcc27c 75%, #b3903c 100%);
+  background-blend-mode:overlay;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,0.3), inset 0 -1px 2px rgba(90,65,15,0.22), 0 1px 3px rgba(0,0,0,0.25);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+  overflow:hidden; padding:2%;
+}
+.bed-plaque-label{
+  font-family:"Gantari",sans-serif; font-weight:700; color:var(--red); text-transform:uppercase;
+  letter-spacing:.1em; line-height:1; white-space:nowrap; flex-shrink:0; margin-bottom:2%;
+}
+.bed-plaque-name{
+  font-family:"Gentium", serif; font-weight:700; color:var(--red); line-height:1.15;
+  white-space:pre-line; word-wrap:break-word; width:100%;
+}
+.journey-media .cap{
+  display:block; margin-top:16px; color:var(--red);
+  font-size:13px; letter-spacing:.1em; text-transform:uppercase; font-weight:700; text-align:center;
+  font-family:"Gantari",sans-serif;
+}
+.journey-media .cap-sub{
+  display:block; margin-top:4px; color:var(--gray);
+  font-size:10.5px; letter-spacing:.04em; text-transform:none; font-weight:400; text-align:center;
+  font-family:"Gantari",sans-serif; font-style:italic;
+}
+.journey-story p{font-size:19px; line-height:1.75; margin-bottom:20px;}
+.journey-story p:first-of-type{font-size:21px; font-weight:600; line-height:1.6;}
+
+.manifest{margin-top:52px;}
+.manifest-head{
+  display:flex; align-items:baseline; justify-content:space-between; gap:16px;
+  padding-bottom:18px; border-bottom:2px solid var(--charcoal); margin-bottom:2px;
+}
+.manifest-kicker{font-size:13px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; font-family:"Gantari",sans-serif;}
+.manifest-count{font-size:13px; color:var(--gray); white-space:nowrap;}
+.manifest-list{list-style:none;}
+.manifest-item{
+  display:grid; grid-template-columns:44px 40px 1fr; gap:22px; align-items:start;
+  padding:28px 0; border-bottom:1px solid var(--line);
+}
+.m-num{font-family:"Gantari",sans-serif; font-size:15px; font-weight:800; color:var(--red); opacity:.55; padding-top:5px;}
+.m-icon{width:30px; height:30px; color:var(--red); margin-top:2px;}
+.m-text h3{font-size:20px; font-weight:700; margin-bottom:6px;}
+.m-text p{font-size:16px; line-height:1.55; color:var(--gray);}
+.manifest-foot{
+  display:flex; gap:16px; align-items:flex-start; margin-top:6px;
+  padding:26px 28px; background:var(--red); border-radius:6px; color:var(--cream);
+}
+.manifest-foot svg{width:26px; height:26px; flex-shrink:0; margin-top:2px;}
+.manifest-foot p{font-size:16px; line-height:1.6; color:rgba(252,251,242,0.92); font-weight:600;}
+@media (max-width:860px){
+  .journey-layout{grid-template-columns:1fr; gap:44px;}
+  .journey-media{position:static;}
+}
+
+
+@media (max-width:600px){
+  section{padding-left:5.5vw; padding-right:5.5vw;}
+  section#journey{padding-top:64px; padding-bottom:64px;}
+  .manifest-item{grid-template-columns:30px 30px 1fr; gap:14px; padding:22px 0;}
+  .m-icon{width:24px; height:24px;}
+  .manifest-foot{flex-direction:column; padding:22px 20px;}
+}
+
+/* ============ GALLERY (CAROUSEL) ============ */
+section#gallery{padding-top:80px; padding-bottom:80px;}
+.carousel{
+  position:relative; border-radius:10px; overflow:hidden;
+  max-width:880px; margin:0 auto;
+  background:var(--maroon-deep);
+  box-shadow:0 30px 60px -30px rgba(45,45,45,0.4);
+}
+.carousel-viewport{
+  position:relative; width:100%; aspect-ratio:16/9; overflow:hidden;
+  background:linear-gradient(135deg, var(--cream-dim) 0%, #ecdfb8 100%);
+}
+.carousel-track{
+  display:flex; height:100%; width:100%;
+  transition:transform .55s cubic-bezier(.2,.8,.2,1);
+  will-change:transform;
+}
+.carousel-slide{position:relative; flex:0 0 100%; height:100%;}
+.carousel-slide img{
+  width:100%; height:100%; object-fit:contain; object-position:center; display:block;
+  cursor:zoom-in;
+}
+.carousel-slide figcaption{
+  position:absolute; left:16px; bottom:16px; z-index:1;
+  color:var(--cream); font-family:"Gantari",sans-serif;
+  font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:700;
+  background:var(--red); padding:8px 14px; border-radius:3px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.2);
+}
+.carousel-slide figcaption::before{
+  content:""; display:inline-block; width:14px; height:2px; background:var(--cream);
+  margin-right:9px; vertical-align:middle; opacity:.85;
+}
+.car-arrow{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:2;
+  width:44px; height:44px; border-radius:50%; border:none; cursor:pointer;
+  background:rgba(252,251,242,0.9); color:var(--red);
+  display:flex; align-items:center; justify-content:center;
   transition:background .2s ease, transform .2s ease;
 }
-.download-btn:hover{background:#c79a3d; transform:translateY(-1px);}
-.download-btn:disabled{opacity:.6; cursor:default; transform:none;}
-.download-btn svg{width:15px; height:15px; flex-shrink:0;}
-
-/* ============ PAGE CANVAS ============ */
-.pages-wrap{padding:72px 0 60px;}
-.a4-page{
-  width:210mm; min-height:297mm; margin:0 auto 30px; background:var(--paper);
-  box-shadow:0 18px 50px rgba(20,16,12,0.35); position:relative; overflow:hidden;
+.car-arrow:hover{background:var(--cream); transform:translateY(-50%) scale(1.06);}
+.car-arrow svg{width:20px; height:20px;}
+.car-prev{left:16px;}
+.car-next{right:16px;}
+.car-counter{
+  position:absolute; right:20px; top:18px; z-index:2;
+  font-family:"Gantari",sans-serif; font-size:11px; letter-spacing:.1em;
+  color:var(--cream); background:rgba(58,18,16,0.6); padding:5px 12px; border-radius:20px;
 }
-.a4-page.pad{padding:20mm 18mm 17mm; display:flex; flex-direction:column;}
-.page-flow{flex:1; display:flex; flex-direction:column; justify-content:space-between; min-height:0;}
+.carousel-thumbs{
+  display:grid; grid-template-columns:repeat(8, 1fr); gap:8px;
+  margin-top:16px; padding:0 14px 16px;
+}
+.car-thumb{
+  position:relative; border:2px solid transparent; border-radius:5px; overflow:hidden;
+  padding:0; cursor:pointer; background:var(--maroon-deep); aspect-ratio:1/1;
+  opacity:.55; transition:opacity .25s ease, border-color .25s ease;
+}
+.car-thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+.car-thumb:hover{opacity:.85;}
+.car-thumb.active{opacity:1; border-color:var(--gold-2);}
 @media (max-width:900px){
-  .a4-page{width:96vw; min-height:auto;}
-  .toolbar{flex-direction:column; align-items:flex-start; gap:8px;}
+  .carousel-viewport{aspect-ratio:4/3;}
+  .carousel-thumbs{grid-template-columns:repeat(4, 1fr);}
+}
+@media (max-width:560px){
+  .car-arrow{width:36px; height:36px;}
+  .carousel-slide figcaption{font-size:11px; left:12px; bottom:12px; padding:6px 11px;}
+  .carousel-thumbs{grid-template-columns:repeat(4, 1fr); gap:6px;}
 }
 
-/* running footer on content pages */
-.folio{
-  position:absolute; left:18mm; right:18mm; bottom:10mm;
-  display:flex; justify-content:space-between; align-items:baseline;
-  font-family:"Gantari",sans-serif; font-size:8px; letter-spacing:.08em; text-transform:uppercase;
-  color:var(--ink-soft); opacity:.72; border-top:0.75px solid var(--hair); padding-top:6px;
+/* ============ IMPACT ============ */
+.impact-numbers{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:24px;}
+.impact-num-card{background:var(--red); color:var(--cream); padding:44px 34px; border-radius:4px;}
+.impact-num-card .stat-num{color:var(--cream); font-size:clamp(40px,5vw,64px);}
+.impact-num-card .stat-label{color:rgba(252,251,242,0.82); font-size:14px; max-width:none;}
+
+/* ============ CAMPAIGN VITALS + BED MAP ============ */
+.vitals-stack{max-width:860px; margin:0 auto;}
+.monitor{
+  background:#fff; border:1px solid var(--line); border-radius:8px; padding:36px 32px;
+  box-shadow:0 30px 70px -40px rgba(45,45,45,0.35);
 }
+.monitor .m-label{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--red); font-weight:700; font-family:"Gantari",sans-serif;}
+.monitor-readout{font-family:"Gantari",sans-serif; font-size:44px; font-weight:800; color:var(--red); letter-spacing:-0.01em;}
+.monitor-readout span{font-size:20px; color:var(--gray); font-weight:600;}
+.monitor-bar-track{width:100%; height:10px; background:var(--cream-dim); border:1px solid var(--line); border-radius:6px; margin:18px 0 8px; overflow:hidden;}
+.monitor-bar-fill{height:100%; width:0%; background:linear-gradient(90deg,#7e2320,#a32d29); border-radius:6px; transition:width 1.6s cubic-bezier(.2,.8,.2,1);}
+.monitor-foot{display:flex; justify-content:space-between; font-size:12px; color:var(--gray);}
 
-.eyebrow{
-  font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; font-weight:700;
-  color:var(--brass-deep); margin-bottom:10px; display:block;
+/* Bed map: 130 bed cells */
+.ward-map{margin-top:34px; padding-top:30px; border-top:1px solid var(--line);}
+.ward-map .wm-head{display:flex; justify-content:space-between; align-items:baseline; gap:14px; margin-bottom:18px; flex-wrap:wrap;}
+.ward-map h3{font-size:18px; font-weight:700;}
+.wm-legend{display:flex; gap:18px; font-size:12px; color:var(--gray); font-family:"Gantari",sans-serif;}
+.wm-legend span{display:inline-flex; align-items:center; gap:7px;}
+.wm-swatch{width:12px; height:12px; border-radius:3px; display:inline-block;}
+.wm-swatch.done{background:var(--red);}
+.wm-swatch.open{background:#fff; border:1px solid var(--line);}
+.wm-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(26px,1fr)); gap:6px;}
+.wm-cell{
+  aspect-ratio:1/1; border-radius:4px; background:var(--cream-dim); border:1px solid var(--line);
+  display:flex; align-items:center; justify-content:center; color:transparent;
+  transition:background .3s ease, transform .3s ease, border-color .3s ease;
 }
-h2.section-title{font-family:"Gentium",serif; font-size:23px; font-weight:700; color:var(--ink); margin-bottom:2px; line-height:1.15;}
-.section-kicker{font-size:11.5px; color:var(--ink-soft); font-style:italic; margin-top:4px; margin-bottom:2px;}
+.wm-cell svg{width:70%; height:70%;}
+.wm-cell.lit{background:var(--red); border-color:var(--red); color:var(--cream); transform:scale(1.02);}
+.wm-cell:hover{transform:scale(1.15);}
+.wm-note{font-size:13px; color:var(--gray); margin-top:16px;}
 
-/* ============ PAGE 1 — COVER ============ */
-.cover-page{padding:0;}
-.cover-photo{position:absolute; inset:0; z-index:0;}
-.cover-photo img{width:100%; height:100%; object-fit:cover; display:block;}
-.cover-scrim{
-  position:absolute; left:0; right:0; bottom:0; height:58%; z-index:1;
-  background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAGQCAYAAACJccGfAAAAV0lEQVR4nO3PMQrAIBQE0TVYSg6Q+x/UVixFogzzy0WeTPnelvGeTFeTFMhgHGZA1xqHGdC1xmEGdK1xP/yy8EJUVFRUVHQDSmoRFRUVFb0YJbWIip5HO8tMBiGdUy5sAAAAAElFTkSuQmCC);
-  background-size:100% 100%;
+.naming-block{margin-top:36px; padding-top:32px; border-top:1px solid var(--line);}
+.naming-block h3{font-size:20px; font-weight:700; margin-bottom:12px;}
+.naming-block p{color:var(--gray); font-size:15px; margin-bottom:10px;}
+.naming-highlight{
+  color:var(--red) !important; font-weight:700;
+  border-left:3px solid var(--red); padding:10px 14px;
+  background:rgba(126,35,32,0.06); border-radius:0 4px 4px 0;
 }
-.cover-mark-wrap{
-  position:absolute; top:12mm; left:14mm; z-index:2; background:var(--paper);
-  padding:3mm 5mm; border-radius:2px; box-shadow:0 2px 10px rgba(0,0,0,0.18);
-  display:inline-flex;
+.price-tag{display:inline-flex; gap:10px; align-items:baseline; margin-top:18px; font-family:"Gantari",sans-serif;}
+.price-tag .amt{font-size:26px; font-weight:800; color:var(--red);}
+.price-tag .amt2{font-size:15px; color:var(--gray);}
+
+/* ============ HOW IT WORKS ============ */
+.steps-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1px; background:var(--line); border:1px solid var(--line);}
+.step-card{background:var(--cream); padding:40px 32px; position:relative;}
+.step-card .s-num{
+  font-family:"Gantari",sans-serif; font-weight:900; font-size:44px; color:rgba(126,35,32,0.15);
+  line-height:1; margin-bottom:16px;
 }
-.cover-mark{display:block; height:8mm; width:auto;}
-.cover-content{position:absolute; left:16mm; right:16mm; bottom:16mm; z-index:2; color:var(--paper);}
-.cover-content .eyebrow{color:#e2b869; margin-bottom:14px;}
-.cover-content h1{
-  font-family:"Gentium",serif; font-weight:700; font-size:40pt; line-height:1.0; letter-spacing:-0.01em;
-  margin-bottom:8mm; text-shadow:0 2px 18px rgba(0,0,0,0.25);
+.step-card h3{font-size:19px; font-weight:700; margin-bottom:10px;}
+.step-card p{font-size:15px; color:var(--gray);}
+
+/* ============ PLEDGE FORM ============ */
+.pledge-section{background:var(--cream-dim);}
+.pledge-wrap{display:grid; grid-template-columns:0.85fr 1.15fr; gap:60px;}
+@media (max-width:920px){.pledge-wrap{grid-template-columns:1fr;}}
+.pledge-intro p{color:var(--gray); font-size:16px; margin-bottom:22px;}
+.pledge-quote{
+  border-left:2px solid var(--red); padding-left:18px; margin-top:34px; font-style:italic;
+  font-size:16px;
 }
-.cover-pulse{width:100%; height:9mm; margin-bottom:7mm; opacity:.9;}
-.cover-meta-row{
-  display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px 18px;
-  border-top:0.75px solid rgba(251,248,239,0.35); padding-top:5mm;
-  font-family:"Gantari",sans-serif; font-size:10.5px; letter-spacing:.03em; color:rgba(251,248,239,0.86);
+form.pledge-form{
+  background:#fff; border-radius:6px; padding:38px 34px;
+  border:1px solid var(--line); border-top:4px solid var(--red);
+  box-shadow:0 30px 70px -40px rgba(45,45,45,0.3);
 }
-.cover-meta-row strong{color:var(--paper); font-weight:700;}
-.cover-institute{font-size:13px; font-weight:700; margin-bottom:3mm; color:var(--paper);}
-
-/* ============ PAGE 2 — THE LEDGER ============ */
-.ledger-head{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:16mm; padding-bottom:6mm; border-bottom:0.75px solid var(--hair);}
-.ledger-head img{height:8mm; width:auto;}
-.ledger-head .doc-meta{text-align:right; font-family:"Gantari",sans-serif; font-size:9.5px; color:var(--ink-soft); line-height:1.7;}
-.ledger-head .doc-meta strong{color:var(--ink); font-weight:700;}
-
-.ledger-rows{margin-top:8mm;}
-.ledger-row{
-  display:flex; align-items:baseline; justify-content:space-between; gap:14px;
-  padding:9px 0; border-bottom:0.75px solid var(--hair-soft);
+.form-row{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:18px;}
+.form-row.single{grid-template-columns:1fr;}
+@media (max-width:560px){.form-row{grid-template-columns:1fr;}}
+.field label{
+  display:block; font-size:11px; letter-spacing:.1em; text-transform:uppercase; font-weight:700;
+  color:var(--gray); margin-bottom:7px; font-family:"Gantari", sans-serif;
 }
-.ledger-row .lr-label{font-family:"Gantari",sans-serif; font-size:11.5px; letter-spacing:.02em; color:var(--ink-soft);}
-.ledger-row .lr-value{font-family:"Gentium",serif; font-weight:700; font-size:17px; color:var(--ink);}
-.ledger-row.total{border-bottom:none; border-top:1.5px solid var(--ink); margin-top:4px; padding-top:12px;}
-.ledger-row.total .lr-label{color:var(--ink); font-weight:700;}
-.ledger-row.total .lr-value{font-size:22px; color:var(--brick);}
-
-.gauge-block{margin-top:15mm;}
-.gauge-label-row{display:flex; justify-content:space-between; align-items:baseline; font-family:"Gantari",sans-serif; font-size:10.5px; color:var(--ink-soft); margin-bottom:7px;}
-.gauge-label-row strong{color:var(--ink); font-size:13px;}
-.gauge-track{position:relative; width:100%; height:5px; background:var(--paper-shade); border-radius:3px;}
-.gauge-fill{position:absolute; left:0; top:0; height:100%; width:77%; background:var(--brass); border-radius:3px;}
-.gauge-tick{position:absolute; top:-4px; right:0; height:13px; width:1.5px; background:var(--ink);}
-.gauge-tick-label{position:absolute; top:11px; right:0; font-family:"Gantari",sans-serif; font-size:8px; color:var(--ink-soft); letter-spacing:.03em;}
-
-.variance-line{
-  margin-top:14mm; padding-top:8mm; border-top:0.75px solid var(--hair);
-  font-family:"Gentium",serif; font-size:12.5px; color:var(--ink-soft); font-style:italic; line-height:1.6;
+.field input, .field textarea{
+  width:100%; border:1px solid var(--line); border-radius:3px; padding:12px 13px;
+  font-family:"Gentium", serif; font-size:15px; background:var(--cream-dim);
+  transition:border-color .2s ease, background .2s ease;
 }
+.field input:focus, .field textarea:focus{outline:none; border-color:var(--red); background:#fff;}
+.field input:focus-visible{outline:2px solid var(--red); outline-offset:1px;}
 
-.intro-para{font-size:12.5px; color:var(--ink-soft); line-height:1.65; margin-top:9px; max-width:135mm;}
-.intro-para strong{color:var(--ink); font-weight:700;}
-
-.read-note{
-  display:flex; gap:12px; margin-top:4mm; padding:9mm 10mm; background:var(--paper-shade); border-radius:2px;
+.calc-box{
+  background:var(--red); color:var(--cream); border-radius:4px; padding:22px 24px; margin-bottom:24px;
+  display:flex; flex-direction:column; gap:16px;
 }
-.read-note .rn-mark{font-family:"Gentium",serif; font-style:italic; font-weight:700; font-size:15px; color:var(--brass-deep); flex-shrink:0;}
-.read-note p{font-family:"Gantari",sans-serif; font-size:9.5px; color:var(--ink-soft); line-height:1.7; letter-spacing:.01em;}
-.read-note p strong{color:var(--ink);}
-
-.process-strip{margin-top:4mm;}
-.process-strip .ps-title{font-family:"Gantari",sans-serif; font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); font-weight:700; margin-bottom:8mm;}
-.process-track{position:relative; display:flex; justify-content:space-between; padding-top:4px;}
-.process-track::before{content:""; position:absolute; top:4px; left:6px; right:6px; height:1px; background:var(--hair);}
-.process-step{position:relative; width:24%; text-align:left;}
-.process-step .dot{width:9px; height:9px; border-radius:50%; background:var(--paper); border:1.5px solid var(--brick); margin-bottom:7px;}
-.process-step.active .dot{background:var(--brick);}
-.process-step .ps-label{font-family:"Gantari",sans-serif; font-size:9.5px; font-weight:700; color:var(--ink); letter-spacing:.02em;}
-.process-step .ps-sub{font-family:"Gentium",serif; font-style:italic; font-size:10px; color:var(--ink-soft); margin-top:3px; line-height:1.4;}
-
-.impact-block{margin-top:2mm;}
-.impact-block .ib-title{font-family:"Gantari",sans-serif; font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--brass-deep); font-weight:700; margin-bottom:3mm;}
-.impact-row{display:flex; gap:16mm;}
-.impact-stat{flex:1; padding-top:6mm; border-top:1.5px solid var(--ink);}
-.impact-stat .is-num{font-family:"Gentium",serif; font-weight:700; font-size:24px; color:var(--brick);}
-.impact-stat .is-label{font-family:"Gantari",sans-serif; font-size:9.5px; color:var(--ink-soft); margin-top:4px; line-height:1.5;}
-
-/* ============ PAGE 3 — VITALS CHECK ============ */
-.flag-note{display:flex; gap:14px; margin-top:6mm;}
-.flag-tab{width:4px; flex-shrink:0; background:var(--brick); border-radius:1px;}
-.flag-note .fn-body{flex:1;}
-.flag-note h3{font-family:"Gentium",serif; font-weight:700; font-size:15.5px; color:var(--ink); margin-bottom:5px;}
-.flag-note p{font-size:12.5px; color:var(--ink-soft); line-height:1.6;}
-.flag-note .amt{font-family:"Gentium",serif; font-weight:700; font-size:20px; color:var(--brick); display:block; margin:6px 0;}
-.flag-note .tagline{
-  display:inline-block; margin-top:8px; font-family:"Gantari",sans-serif; font-size:9px; font-weight:700;
-  letter-spacing:.05em; text-transform:uppercase; color:var(--brass-deep);
+.calc-box .calc-label{font-size:11px; letter-spacing:.1em; text-transform:uppercase; opacity:.85; font-family:"Gantari",sans-serif; font-weight:700;}
+.calc-box .calc-total{font-size:26px; font-weight:800; font-family:"Gantari",sans-serif;}
+.calc-box .calc-total small{font-size:13px; font-weight:500; opacity:.85; display:block;}
+.calc-presets{display:flex; gap:8px; flex-wrap:wrap;}
+.calc-preset-btn{
+  background:rgba(252,251,242,0.12); border:1px solid rgba(252,251,242,0.45); color:var(--cream);
+  font-family:"Gantari",sans-serif; font-weight:700; font-size:13px; padding:8px 15px;
+  border-radius:20px; cursor:pointer; transition:background .2s ease, color .2s ease, border-color .2s ease;
 }
-.flag-note .tagline::before{content:"\2014  "; }
+.calc-preset-btn:hover{border-color:var(--cream);}
+.calc-preset-btn.active{background:var(--cream); color:var(--red); border-color:var(--cream);}
+.calc-bottom-row{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;}
 
-.pulse-flow-wrap{margin-top:16mm;}
-.pulse-flow-labels{display:flex; justify-content:space-between; font-family:"Gantari",sans-serif; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:4px;}
-.pulse-flow-svg{width:100%; height:34mm;}
-.pf-figures{display:flex; justify-content:space-between; margin-top:2mm;}
-.pf-figure{text-align:left;}
-.pf-figure.right{text-align:right;}
-.pf-figure .before{font-family:"Gantari",sans-serif; font-size:11px; color:var(--ink-soft); text-decoration:line-through; opacity:.7;}
-.pf-figure .after{font-family:"Gentium",serif; font-weight:700; font-size:19px; color:var(--ink);}
-
-.net-effect{
-  margin-top:14mm; padding-top:8mm; border-top:0.75px solid var(--hair);
-  font-family:"Gentium",serif; font-style:italic; font-size:12.5px; color:var(--ink-soft); text-align:center; line-height:1.6;
+.signature-box{
+  border:1px solid var(--red); border-radius:5px; padding:22px 22px 18px;
+  background:rgba(126,35,32,0.04); margin-bottom:24px;
 }
-
-/* ============ PAGE 4 — LEDGER TABLE ============ */
-table.acct-table{width:100%; border-collapse:collapse; margin-top:10mm;}
-table.acct-table thead th{
-  font-family:"Gantari",sans-serif; font-size:8.5px; letter-spacing:.07em; text-transform:uppercase;
-  font-weight:700; color:var(--ink-soft); text-align:left; padding:0 6px 8px;
-  border-bottom:1.5px solid var(--ink);
+.signature-box .sig-heading{
+  font-family:"Gantari",sans-serif; font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+  font-weight:700; color:var(--red); margin-bottom:6px; display:block;
 }
-table.acct-table thead th.num{text-align:right;}
-table.acct-table tbody td{
-  font-family:"Gantari",sans-serif; font-size:10px; color:var(--ink); padding:9px 6px;
-  border-bottom:0.75px solid var(--hair-soft); vertical-align:top;
+.sig-hint{font-size:12.5px; color:var(--gray); margin-bottom:16px;}
+.sig-row{display:flex; gap:18px; align-items:flex-start; flex-wrap:wrap; margin-bottom:18px;}
+.sig-field{flex:1; min-width:220px;}
+.sig-field input{font-family:"Gentium", serif; font-style:italic; font-size:19px;}
+.sig-draw-field label{display:block;}
+#sigCanvas{
+  width:100%; max-width:360px; height:90px; display:block;
+  background:#fff; border:1px solid var(--line); border-radius:4px;
+  cursor:crosshair; touch-action:none;
 }
-table.acct-table tbody td.num{text-align:right; font-variant-numeric:tabular-nums;}
-table.acct-table tbody td .was{display:block; font-size:8px; color:var(--ink-soft); text-decoration:line-through; opacity:.7; margin-top:1px;}
-table.acct-table tbody td .cr{display:block; font-size:8px; color:var(--ink-soft); margin-top:1px;}
-table.acct-table tbody tr.total-row td{
-  border-top:1.5px solid var(--ink); border-bottom:none; font-weight:700; padding-top:11px;
+.sig-clear-btn{
+  background:none; border:none; padding:0; margin-top:6px;
+  font-family:"Gantari",sans-serif; font-size:11px; letter-spacing:.05em; text-transform:uppercase;
+  font-weight:700; color:var(--gray); cursor:pointer; text-decoration:underline;
 }
-.status-ok{color:var(--green); font-weight:600;}
-.status-ok::before{content:"\25CF  "; font-size:7px; vertical-align:middle;}
-.status-flag{color:var(--brick); font-weight:600;}
-.status-flag::before{content:"\25B2  "; font-size:7px; vertical-align:middle;}
-.var-zero{color:var(--ink-soft);}
-.var-pos{color:var(--brass-deep); font-weight:600;}
+.sig-clear-btn:hover{color:var(--red);}
+.confirm-row{display:flex; gap:10px; align-items:flex-start; font-size:13px; color:var(--gray);}
+.confirm-row input{margin-top:3px;}
 
-.table-footnote{
-  margin-top:10mm; padding-top:6mm; border-top:0.75px solid var(--hair);
-  font-family:"Gentium",serif; font-size:11px; color:var(--ink-soft); line-height:1.65;
-}
-.table-footnote strong{color:var(--ink);}
-
-.status-key{display:flex; gap:24px; flex-wrap:wrap;}
-.status-key .sk-item{display:flex; align-items:baseline; gap:8px; font-family:"Gantari",sans-serif; font-size:10px; color:var(--ink-soft);}
-.status-key .sk-item strong{color:var(--ink); font-weight:700;}
-
-/* ============ PHOTO PLATES ============ */
-.plate-page{padding:0; display:flex; flex-direction:column;}
-.plate-photo{flex:1; overflow:hidden; position:relative;}
-.plate-photo img{width:100%; height:100%; object-fit:cover; display:block;}
-.plate-caption{
-  padding:9mm 18mm 11mm; border-top:0.75px solid var(--hair);
-}
-.plate-caption .fig-no{font-family:"Gantari",sans-serif; font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--brass-deep); font-weight:700; margin-bottom:3px;}
-.plate-caption h3{font-family:"Gentium",serif; font-weight:700; font-size:16.5px; color:var(--ink);}
-.plate-caption p{font-family:"Gentium",serif; font-style:italic; font-size:11.5px; color:var(--ink-soft); margin-top:2px;}
-
-.plate-placeholder{
-  flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;
+/* Recognition name + plaques: stacked layout so nothing overlaps */
+.form-row.recog-row{grid-template-columns:1fr;}
+.gold-plaque-wrap{display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:flex-start; gap:14px 10px; margin-top:16px;}
+/* Real plate is 10in x 3.5in — every preview keeps that exact 20:7 proportion.
+   SUPPORTED BY + rule tuck right up at the top edge; the donor's name is the
+   hero of the plate and owns everything below the rule. */
+.gold-plaque{
+  flex:1 1 168px; max-width:238px; width:100%; aspect-ratio:10/3.5;
+  position:relative;
+  border-radius:6px; padding:3.5% 6% 4%;
   background:
-    repeating-linear-gradient(45deg, rgba(126,35,32,0.045) 0 14px, transparent 14px 28px),
-    var(--paper-shade);
-  color:var(--brick); opacity:.85;
+    repeating-linear-gradient(0deg,
+      rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px,
+      rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 3px),
+    linear-gradient(135deg,
+      #b08d3b 0%, #cfae5e 18%, #e3cd8f 38%, #c5a04a 55%,
+      #dcc27c 75%, #b3903c 100%);
+  background-blend-mode:overlay;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,0.3), inset 0 -2px 4px rgba(90,65,15,0.22), 0 2px 5px rgba(0,0,0,0.15), 0 10px 22px -12px rgba(45,45,45,0.35);
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start; text-align:center;
+  overflow:hidden;
 }
-.plate-placeholder svg{width:44px; height:44px;}
-.plate-placeholder span{font-family:"Gantari",sans-serif; font-size:11px; letter-spacing:.09em; text-transform:uppercase; font-weight:700;}
-
-/* two plates stacked on one page, to avoid a page of just one photo */
-.split-plate-page{padding:0; display:flex; flex-direction:column;}
-.split-plate{flex:1 1 50%; display:flex; flex-direction:column; min-height:0;}
-.split-plate + .split-plate{box-shadow:0 -1px 0 var(--paper);}
-.split-plate .plate-photo{flex:1;}
-.split-plate .plate-caption{padding:7mm 18mm 8mm;}
-.split-plate .plate-caption h3{font-size:15px;}
-.split-plate .plate-caption p{font-size:10.5px;}
-.split-plate .plate-placeholder{gap:9px;}
-.split-plate .plate-placeholder svg{width:34px; height:34px;}
-
-/* ============ PAGE 9 — CLOSING ============ */
-.closing-page{background:var(--brick); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20mm; text-align:center; position:relative; overflow:hidden;}
-.closing-pulse{width:165mm; max-width:100%; height:42mm; margin-bottom:11mm;}
-.closing-page .quote{font-family:"Gentium",serif; font-style:italic; font-size:19pt; color:var(--paper); max-width:155mm; line-height:1.6; margin-bottom:11mm;}
-.closing-page img{height:10mm; width:auto; margin-bottom:9mm; opacity:.95;}
-.closing-page .org{font-family:"Gantari",sans-serif; font-size:10.5pt; letter-spacing:.05em; color:#e7c9a8; margin-bottom:5mm;}
-.closing-page .tagline{font-family:"Gentium",serif; font-style:italic; font-size:10.5pt; color:rgba(251,248,239,0.68); max-width:120mm; line-height:1.6; margin-bottom:12mm;}
-.closing-page .contact{
-  font-family:"Gantari",sans-serif; font-size:8.5pt; letter-spacing:.06em; text-transform:uppercase;
-  color:rgba(251,248,239,0.55); padding-top:6mm; border-top:0.75px solid rgba(251,248,239,0.25); width:80mm;
+.plaque-actions{margin-top:12px;}
+.plaque-png-btn{
+  background:none; border:1px solid var(--line); border-radius:3px; padding:8px 16px;
+  font-family:"Gantari",sans-serif; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  font-weight:700; color:var(--red); cursor:pointer; transition:border-color .2s ease, background .2s ease;
+}
+.plaque-png-btn:hover{border-color:var(--red); background:rgba(126,35,32,0.05);}
+.gp-names{
+  flex:1; width:100%; min-height:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+.gp-bed-tag{
+  font-family:"Gantari",sans-serif; font-size:8px; letter-spacing:.1em; text-transform:uppercase;
+  font-weight:700; color:var(--red); margin-top:4px; opacity:0.8;
+}
+.same-name-row{display:flex; align-items:flex-start; gap:8px; margin-top:10px; font-size:13.5px; color:var(--gray);}
+.same-name-row input{margin-top:3px;}
+.same-name-row label{cursor:pointer;}
+.individual-names-wrap{display:flex; flex-direction:column; gap:10px; margin-top:14px;}
+.individual-name-field label{font-size:13px;}
+.gp-supported{
+  font-family:"Gantari",sans-serif; font-size:8px; letter-spacing:.18em; text-transform:uppercase;
+  font-weight:700; color:var(--red); margin-bottom:6px; text-shadow:0 1px 0 rgba(255,255,255,0.3);
+  opacity:.9; flex-shrink:0;
+}
+.gp-name{
+  font-family:"Gentium", serif; font-weight:700; color:var(--red); line-height:1.05;
+  text-shadow:0 1px 0 rgba(255,255,255,0.3); white-space:nowrap; max-width:100%;
+  overflow:hidden; text-overflow:ellipsis; font-size:20px;
+}
+.gp-nameblock{
+  font-family:"Gentium", serif; font-weight:700; color:var(--red); line-height:1.22;
+  text-shadow:0 1px 0 rgba(255,255,255,0.3); width:100%;
+  white-space:pre-line; word-wrap:break-word; font-size:20px;
+}
+.gp-amp{
+  font-family:"Gentium", serif; font-weight:700; color:var(--red); line-height:1;
+  text-shadow:0 1px 0 rgba(255,255,255,0.3); margin:1px 0; flex-shrink:0;
+}
+.field-hint{
+  font-size:12px; color:var(--gray); margin-top:6px; font-family:"Gentium", serif;
 }
 
-/* ============ PRINT ============ */
-@media print{
-  body{background:none;}
-  .toolbar{display:none !important;}
-  .pages-wrap{padding:0;}
-  .a4-page{box-shadow:none; margin:0; width:210mm; min-height:297mm;}
-  @page{size:A4; margin:0;}
+.pledge-actions{display:flex; gap:12px; flex-wrap:wrap;}
+.pledge-actions > button{flex:1 1 220px;}
+.submit-btn{
+  background:var(--red); color:var(--cream); border:none; padding:17px 20px;
+  font-family:"Gantari",sans-serif; font-weight:700; font-size:14px; letter-spacing:.08em; text-transform:uppercase;
+  border-radius:3px; cursor:pointer; transition:background .25s ease, transform .2s ease;
 }
+.submit-btn:hover{background:var(--red-bright); transform:translateY(-2px);}
+.submit-btn:disabled, .download-btn:disabled{opacity:.65; cursor:default; transform:none;}
+.download-btn{
+  background:transparent; color:var(--red); border:2px solid var(--red); padding:15px 20px;
+  font-family:"Gantari",sans-serif; font-weight:700; font-size:14px; letter-spacing:.08em; text-transform:uppercase;
+  border-radius:3px; cursor:pointer; transition:background .25s ease, transform .2s ease;
+}
+.download-btn:hover{background:rgba(126,35,32,0.06); transform:translateY(-2px);}
+.submit-note{font-size:12.5px; color:var(--gray); margin-bottom:14px; line-height:1.55;}
+.submit-note strong{color:var(--red);}
+
+/* ============ CLOSING BAND ============ */
+.closing-band{
+  background:var(--red); color:var(--cream); text-align:center; padding:90px 6vw;
+}
+.closing-band h2{font-size:clamp(26px,3.6vw,40px); font-weight:800; color:var(--cream); margin-bottom:16px; line-height:1.1;}
+.closing-band p{color:rgba(252,251,242,0.85); font-size:17px; max-width:560px; margin:0 auto 34px;}
+.closing-band .btn-cream{
+  display:inline-block; background:var(--cream); color:var(--red);
+  font-family:"Gantari",sans-serif; font-weight:800; font-size:13px; letter-spacing:.08em;
+  text-transform:uppercase; padding:17px 40px; border-radius:2px; text-decoration:none;
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.closing-band .btn-cream:hover{transform:translateY(-2px); box-shadow:0 14px 30px -12px rgba(0,0,0,0.4);}
+
+/* ============ FOOTER ============ */
+footer{background:var(--red); color:var(--cream); text-align:center; padding:60px 6vw 40px; border-top:3px solid var(--red);}
+footer img{height:72px !important; width:auto !important; max-width:401px !important; margin:0 auto 22px;}
+footer .quote{font-style:italic; font-size:18px; color:var(--cream); max-width:620px; margin:0 auto 14px;}
+footer .org{font-size:13px; letter-spacing:.05em; color:var(--cream); opacity:.9;}
+footer .copyright{font-size:11px; margin-top:26px; color:var(--cream); opacity:.7;}
+
+/* ============ HAMBURGER MENU ============ */
+#menuToggle{
+  display:none; background:none; border:1px solid var(--line); border-radius:2px;
+  width:42px; height:38px; cursor:pointer; padding:9px 10px;
+  flex-direction:column; justify-content:space-between; align-items:stretch;
+}
+#menuToggle span{display:block; height:2px; background:var(--charcoal); border-radius:1px; transition:transform .28s ease, opacity .28s ease;}
+#menuToggle[aria-expanded="true"] span:nth-child(1){transform:translateY(8px) rotate(45deg);}
+#menuToggle[aria-expanded="true"] span:nth-child(2){opacity:0;}
+#menuToggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-8px) rotate(-45deg);}
+#mobileMenu{
+  display:none; position:fixed; top:0; left:0; width:100%; z-index:996;
+  background:rgba(252,251,242,0.98); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+  padding:130px 5vw 28px; flex-direction:column; gap:4px;
+  transform:translateY(-12px); opacity:0; pointer-events:none;
+  transition:transform .3s ease, opacity .3s ease;
+}
+#mobileMenu.open{transform:translateY(0); opacity:1; pointer-events:auto;}
+#mobileMenu a{
+  font-family:"Gantari",sans-serif; font-size:15px; font-weight:600; letter-spacing:.06em;
+  text-transform:uppercase; text-decoration:none; color:var(--charcoal);
+  padding:13px 4px; border-bottom:1px solid var(--line);
+}
+#mobileMenu a:last-child{border-bottom:none; color:var(--red); font-weight:700;}
+@media (max-width:820px){
+  #menuToggle{display:flex;}
+  #mobileMenu{display:flex;}
+  header.site-nav .nav-cta{display:none;}
+}
+
+/* ============ VISION BRIDGE (Sadguru's message) ============ */
+section#vision{padding-top:100px; padding-bottom:100px;}
+.vision-grid{
+  display:grid; grid-template-columns:0.8fr 1.2fr; gap:56px; align-items:center;
+  max-width:1100px; margin:0 auto;
+}
+.vision-photo{
+  border-radius:8px; overflow:hidden; border:1px solid var(--line);
+  box-shadow:0 24px 50px -28px rgba(45,45,45,0.35);
+}
+.vision-photo img{width:100%; height:auto; display:block;}
+.vision-text .eyebrow{margin-bottom:18px;}
+.vision-msg{
+  font-family:"Gentium", serif; font-style:italic;
+  font-size:clamp(19px,2.2vw,24px); line-height:1.6; color:var(--charcoal);
+  margin-bottom:18px;
+}
+.vision-attrib{
+  display:block; font-family:"Gantari",sans-serif; font-size:13px; letter-spacing:.1em;
+  text-transform:uppercase; font-weight:700; color:var(--red); margin-bottom:26px;
+}
+@media (max-width:760px){
+  .vision-grid{grid-template-columns:1fr; gap:32px;}
+}
+
+/* ============ LIGHTBOX ============ */
+#lightbox{
+  position:fixed; inset:0; z-index:1200; display:none;
+  background:rgba(20,18,14,0.92); backdrop-filter:blur(6px);
+  align-items:center; justify-content:center; padding:5vh 4vw;
+}
+#lightbox.open{display:flex;}
+#lightbox figure{max-width:min(1100px,92vw); max-height:90vh; display:flex; flex-direction:column; gap:14px; margin:0;}
+#lightbox img{max-width:100%; max-height:78vh; object-fit:contain; border-radius:3px; box-shadow:0 30px 80px rgba(0,0,0,0.5);}
+#lightbox figcaption{
+  color:rgba(252,251,242,0.9); font-family:"Gantari",sans-serif;
+  font-size:13px; letter-spacing:.06em; text-align:center;
+}
+#lightbox .lb-close{
+  position:absolute; top:22px; right:26px; background:none; border:none; cursor:pointer;
+  color:var(--cream); font-family:"Gantari",sans-serif; font-size:13px; letter-spacing:.12em;
+  text-transform:uppercase; font-weight:700; display:flex; align-items:center; gap:8px; padding:8px;
+}
+.carousel-slide img{cursor:zoom-in;}
 </style>
 </head>
 <body>
 
-<!-- TOOLBAR -->
-<div class="toolbar">
-  <span class="tb-label">FUND UTILISATION REPORT &middot; A4 &middot; 7 PAGES</span>
-  <button class="download-btn" id="downloadBtn">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13m0 0l-4-4m4 4l4-4M4 19h16"/></svg>
-    <span id="downloadBtnLabel">Download PDF</span>
-  </button>
+<!-- ECG SCROLL PROGRESS BAR -->
+<div id="ecg-progress" aria-hidden="true">
+  <svg viewBox="0 0 1000 46" preserveAspectRatio="none">
+    <path id="ecg-track" d="M0,23 L120,23 L136,23 L146,4 L158,42 L170,23 L180,23 L300,23 L316,23 L326,4 L338,42 L350,23 L360,23 L480,23 L496,23 L506,4 L518,42 L530,23 L540,23 L660,23 L676,23 L686,4 L698,42 L710,23 L720,23 L840,23 L856,23 L866,4 L878,42 L890,23 L900,23 L1000,23"/>
+    <path id="ecg-fill" d="M0,23 L120,23 L136,23 L146,4 L158,42 L170,23 L180,23 L300,23 L316,23 L326,4 L338,42 L350,23 L360,23 L480,23 L496,23 L506,4 L518,42 L530,23 L540,23 L660,23 L676,23 L686,4 L698,42 L710,23 L720,23 L840,23 L856,23 L866,4 L878,42 L890,23 L900,23 L1000,23"
+    stroke-dasharray="1500" stroke-dashoffset="1500"/>
+    <circle id="ecg-dot" cx="0" cy="23" r="4"/>
+  </svg>
+  <div id="ecg-pct">0% read</div>
+  <div id="ecg-heart"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-6.7-4.35-9.6-8.28C.6 10.1 1.1 6.6 4 5.05c2.2-1.18 4.6-.4 6 1.4l2 2.55 2-2.55c1.4-1.8 3.8-2.58 6-1.4 2.9 1.55 3.4 5.05 1.6 7.67C18.7 16.65 12 21 12 21z"/></svg></div>
 </div>
 
-<div class="pages-wrap" id="pagesWrap">
+<!-- NAV -->
+<header class="site-nav" id="siteNav">
+  <a href="#top" aria-label="One World One Family Mission, home">
+    <img class="nav-logo" src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/OWOF_LOGO_H_RED_DIGITAL_web600.png" alt="One World One Family Mission" width="600" height="199" style="height:58px; width:auto; max-width:175px;" decoding="async">
+  </a>
+  <nav class="nav-links" aria-label="Sections">
+    <a class="nav-link" href="#need">The need</a>
+    <a class="nav-link" href="#journey">Inside a bed</a>
+    <a class="nav-link" href="#vision">The vision</a>
+    <a class="nav-link" href="#gallery">Gallery</a>
+    <a class="nav-link" href="#vitals">Progress</a>
+    <a class="nav-link" href="#how">How it works</a>
+  </nav>
+  <a class="nav-cta" href="#pledge">Sponsor a bed</a>
+  <button id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
 
-  <!-- PAGE 1 — COVER -->
-  <section class="a4-page cover-page">
-    <div class="cover-photo">
-      <img src="https://raw.githubusercontent.com/owofoneworldonefamily-design/icu-healing-beds/main/Capitol%20Hill%20Full%20Picture.jpg" alt="Full view of the hospital building" crossorigin="anonymous">
-    </div>
-    <div class="cover-scrim"></div>
-    <div class="cover-mark-wrap">
-      <img class="cover-mark" src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/OWOF_LOGO_H_RED_DIGITAL_web600.png" alt="One World One Family Mission" crossorigin="anonymous">
-    </div>
-    <div class="cover-content">
-      <span class="eyebrow">Fund Utilisation Report</span>
-      <h1>MoU&nbsp;1 &mdash; SH&nbsp;CCC</h1>
-      <svg class="cover-pulse" viewBox="0 0 640 40" preserveAspectRatio="none">
-        <path d="M0,20 L230,20 L242,20 L252,4 L264,36 L276,20 L288,20 L640,20" fill="none" stroke="#e2b869" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <div class="cover-institute">Sri Madhusudan Sai Institute of Medical Sciences and Research</div>
-      <div class="cover-meta-row">
-        <span>Prepared for <strong>Donors &amp; Partners</strong></span>
-        <span>Currency <strong>INR</strong></span>
-        <span>Report date <strong>28 July 2026</strong></span>
-      </div>
-    </div>
-  </section>
+<!-- MOBILE MENU PANEL -->
+<nav id="mobileMenu" aria-label="Mobile sections">
+  <a href="#need">The need</a>
+  <a href="#journey">Inside a bed</a>
+  <a href="#vision">The vision</a>
+  <a href="#gallery">Gallery</a>
+  <a href="#vitals">Progress</a>
+  <a href="#how">How it works</a>
+  <a href="#pledge">Sponsor a bed</a>
+</nav>
 
-  <!-- PAGE 2 — THE LEDGER -->
-  <section class="a4-page pad">
-    <div class="ledger-head">
-      <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/OWOF_LOGO_H_RED_DIGITAL_web600.png" alt="One World One Family Mission" crossorigin="anonymous">
-      <div class="doc-meta"><strong>MoU 1 &ndash; SH CCC</strong><br>Fund Utilisation Statement</div>
-    </div>
-
-    <span class="eyebrow">The ledger</span>
-    <h2 class="section-title">Actual spent so far</h2>
-    <p class="section-kicker">Every rupee proposed, given, spent, and reported against MoU 1 &ndash; SH CCC.</p>
-
-    <div class="page-flow">
-      <div>
-        <p class="intro-para">Nearly two out of every three people in India live in a rural area, yet barely <strong>one in four ICU beds</strong> is anywhere near them. MoU 1 &ndash; SH CCC funds the equipment, theatre, and construction that close that gap at Sri Madhusudan Sai Institute of Medical Sciences and Research &mdash; the ledger below is the record of that spend to date.</p>
-
-        <div class="ledger-rows">
-          <div class="ledger-row"><span class="lr-label">Proposed</span><span class="lr-value tab">&#8377;65,00,00,000</span></div>
-          <div class="ledger-row"><span class="lr-label">Actual given</span><span class="lr-value tab">&#8377;65,00,00,000</span></div>
-          <div class="ledger-row"><span class="lr-label">Actual spent</span><span class="lr-value tab">&#8377;50,04,00,000</span></div>
-          <div class="ledger-row"><span class="lr-label">Reported</span><span class="lr-value tab">&#8377;50,00,00,000</span></div>
-          <div class="ledger-row total"><span class="lr-label">Variance</span><span class="lr-value tab">&#8377;15,00,00,000</span></div>
-        </div>
-      </div>
-
-      <div class="read-note">
-        <span class="rn-mark">&ldquo;</span>
-        <p><strong>Reading the ledger:</strong> &ldquo;Given&rdquo; is what donors have released. &ldquo;Spent&rdquo; is what has left our accounts against invoices. &ldquo;Reported&rdquo; is what has been formally accounted for with the institute. A gap between the three is normal in an active build &mdash; it is not a shortfall.</p>
-      </div>
-
-      <div>
-        <div class="gauge-block">
-          <div class="gauge-label-row"><span>Overall utilisation against proposed budget</span><strong>77%</strong></div>
-          <div class="gauge-track">
-            <div class="gauge-fill"></div>
-            <div class="gauge-tick"></div>
-            <div class="gauge-tick-label">100%</div>
-          </div>
-        </div>
-        <p class="variance-line">The &#8377;15,00,00,000 variance reflects funds proposed but not yet disbursed &mdash; primarily the Cath Lab order discussed on the following page, plus rounding on the ICU Beds line.</p>
-      </div>
-    </div>
-
-    <div class="folio"><span>One World One Family Mission</span><span>02</span></div>
-  </section>
-
-  <!-- PAGE 3 — VITALS CHECK -->
-  <section class="a4-page pad">
-    <span class="eyebrow">Vitals check &middot; Cath Lab</span>
-    <h2 class="section-title">A budget revision, not a budget increase</h2>
-    <p class="section-kicker">How a &#8377;15,00,00,000 order gets funded without asking donors for more.</p>
-
-    <div class="page-flow">
-      <div class="flag-note">
-        <div class="flag-tab"></div>
-        <div class="fn-body">
-          <h3>Order placed</h3>
-          <p>An order has now been placed for the Cath Lab equipment.</p>
-          <span class="amt tab">&#8377;15,00,00,000</span>
-          <p>The actual cost came in higher than the originally proposed &#8377;5,00,00,000 &mdash; the true requirement is &#8377;15,00,00,000.</p>
-          <span class="tagline">Funded by reallocation, not additional funds</span>
-        </div>
-      </div>
-
-      <div class="pulse-flow-wrap">
-        <div class="pulse-flow-labels"><span>Robotics &middot; proposed</span><span>Cath Lab &middot; proposed</span></div>
-        <svg class="pulse-flow-svg" viewBox="0 0 680 130" preserveAspectRatio="none">
-          <path d="M10,65 L260,65 L280,20 L300,110 L320,65 L420,65" fill="none" stroke="#7e2320" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M420,65 L640,65" fill="none" stroke="#7e2320" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
-          <defs>
-            <marker id="arrow" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto">
-              <path d="M0,0 L9,4.5 L0,9 Z" fill="#7e2320"/>
-            </marker>
-          </defs>
-          <text x="300" y="16" text-anchor="middle" font-family="Gantari, sans-serif" font-size="12" font-weight="700" fill="#7e2320">&#8377;10.00 Cr moved</text>
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <span class="eyebrow"><span class="pulse-dot"></span> ICU Healing Beds</span>
+      <h1 class="hero-title">The first hour<br>decides <em>everything.</em></h1>
+      <p class="hero-sub">In rural emergencies, the nearest ICU is often hours away. Sponsoring a fully equipped ICU bed brings critical care to where it is needed most and sustains it as a permanent, life-saving asset, completely free of charge.</p>
+      <p class="hero-institute">Sri Madhusudan Sai Institute of Medical Sciences and Research</p>
+      <div class="hero-ecg-wrap" aria-hidden="true">
+        <svg viewBox="0 0 640 70" preserveAspectRatio="none" width="100%" height="100%">
+          <path id="hero-ecg-path" fill="none" stroke="#7e2320" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          d="M0,35 L70,35 L84,35 L96,10 L112,60 L126,35 L140,35 L260,35 L274,35 L286,10 L302,60 L316,35 L330,35 L450,35 L464,35 L476,10 L492,60 L506,35 L520,35 L640,35"/>
         </svg>
-        <div class="pf-figures">
-          <div class="pf-figure">
-            <div class="before tab">&#8377;20,00,00,000</div>
-            <div class="after tab">&#8377;10,00,00,000</div>
-          </div>
-          <div class="pf-figure right">
-            <div class="before tab">&#8377;5,00,00,000</div>
-            <div class="after tab">&#8377;15,00,00,000</div>
+      </div>
+      <div class="hero-cta-row">
+        <a href="#pledge" class="btn-primary">Sponsor an ICU bed</a>
+        <a href="#need" class="btn-ghost">See the need</a>
+      </div>
+      <div class="hero-mini-stats">
+        <div class="hms"><div class="n">130</div><div class="l"><strong>ICU beds</strong> in total need sponsorship (in this campaign)</div></div>
+        <div class="hms"><div class="n">100</div><div class="l"><strong>ICU beds</strong> still open for sponsorship</div></div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-photo-card">
+        <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/icu%20ward.jpg" alt="ICU ward at Sri Madhusudan Sai Institute of Medical Sciences and Research" width="4402" height="2475" fetchpriority="high" decoding="async">
+        <span class="cap">An ICU Ward at SMSIMSR</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEED OF THE HOUR -->
+<section id="need" class="section-dark">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <span class="eyebrow">The need of the hour</span>
+      <h2 class="section-title">In an emergency, immediate intervention is crucial.</h2>
+      <p>An ICU bed provides constant monitoring and immediate action when every second counts. Without local access to this care, treatable emergencies turn fatal. We are building the permanent infrastructure needed to close this gap and save lives.</p>
+    </div>
+
+    <div class="need-grid reveal">
+      <div class="need-card">
+        <span class="tag">01 &middot; The wait</span>
+        <h3>Hours, not minutes</h3>
+        <p>In many rural communities, the nearest available ICU bed is one to three hours away by road, time a critical patient often doesn't have.</p>
+      </div>
+      <div class="need-card">
+        <span class="tag">02 &middot; The emergency</span>
+        <h3>No time to spare</h3>
+        <p>Cardiac events, sepsis, snakebite, and road trauma are among the most common rural emergencies, each demanding advanced care immediately.</p>
+      </div>
+      <div class="need-card">
+        <span class="tag">03 &middot; The cost of delay</span>
+        <h3>Distance decides outcomes</h3>
+        <p>Public health research consistently links delayed access to critical care with worse outcomes. This is not only a logistics problem.</p>
+      </div>
+    </div>
+
+    <div class="mismatch reveal" id="mismatch">
+      <div class="mismatch-head">
+        <h3>The pressing need, at a glance.</h3>
+        <div class="wm-legend">
+          <span><span class="wm-swatch" style="background:var(--red);"></span>Rural</span>
+          <span><span class="wm-swatch" style="background:#fff; border:1px solid var(--line);"></span>In cities</span>
+        </div>
+      </div>
+
+      <div class="mm-row">
+        <div class="mm-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 21v-1a8 8 0 0116 0v1"/></svg>
+          <span>Where India's people live</span>
+        </div>
+        <div class="mm-bar" role="img" aria-label="65 percent of India's population lives in rural areas, 35 percent in cities">
+          <div class="mm-fill rural" data-width="65"><span class="mm-pct" data-count="65">0%</span><span class="mm-cap">rural</span></div>
+          <div class="mm-rest">35% in cities</div>
+        </div>
+      </div>
+
+      <div class="mm-row">
+        <div class="mm-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="10" width="18" height="6" rx="1"/><path d="M5 16v3M19 16v3M3 10V7"/></svg>
+          <span>Where India's ICU beds are</span>
+        </div>
+        <div class="mm-bar" role="img" aria-label="Only 25 percent of ICU beds are rural, 75 percent are in cities">
+          <div class="mm-fill rural" data-width="25"><span class="mm-pct" data-count="25">0%</span><span class="mm-cap">rural</span></div>
+          <div class="mm-rest">75% in cities</div>
+        </div>
+      </div>
+
+      <p class="mm-note">Line up the two red bars and the gap tells the whole story: nearly two out of every three Indians live in rural areas, yet barely one in four ICU beds is anywhere near them.</p>
+    </div>
+  </div>
+</section>
+
+<!-- LIFELINE JOURNEY -->
+<section id="journey">
+  <div class="section-inner">
+    <div class="journey-header reveal">
+      <span class="eyebrow">The Critical-Care Ecosystem</span>
+      <h2 class="section-title">A Critical Care Ecosystem</h2>
+    </div>
+
+    <div class="journey-layout">
+      <div class="journey-media reveal">
+        <div class="bed-photo-wrap" id="bedPhotoWrap">
+          <img src="https://raw.githubusercontent.com/owofoneworldonefamily-design/icu-healing-beds/main/Bed%20without%20Name.jpg" alt="A fully equipped ICU bed with monitoring and life-support equipment" width="1598" height="2688" loading="lazy" decoding="async">
+          <div class="bed-plaque-overlay" id="bedPlaqueOverlay" aria-hidden="true">
+            <div class="bed-plaque-label" id="bedPlaqueLabel">Supported by</div>
+            <div class="bed-plaque-name" id="bedPlaqueName">Your Name / Organisation</div>
           </div>
         </div>
-        <p class="net-effect">Net effect: &#8377;0 change to the &#8377;65,00,00,000 total proposed budget for MoU 1 &ndash; SH CCC &mdash; only a shift between two lines.</p>
+        <span class="cap">One complete ICU bed unit</span>
+        <span class="cap-sub">Your name appears here, exactly as you type it below</span>
       </div>
 
-      <div class="process-strip">
-        <div class="ps-title">What happens next</div>
-        <div class="process-track">
-          <div class="process-step active">
-            <div class="dot"></div>
-            <div class="ps-label">Order placed</div>
-            <div class="ps-sub">Confirmed, this update</div>
+      <div class="journey-content">
+        <div class="journey-story reveal">
+          <p>From the moment a critical patient arrives, this fully equipped unit empowers our medical teams to rapidly triage, stabilise vitals, and execute round-the-clock intervention. Whether a patient requires mechanical ventilation or post-operative monitoring, this single ecosystem carries them from their most vulnerable hour safely through to recovery.</p>
+        </div>
+
+        <div class="manifest reveal">
+          <div class="manifest-head">
+            <span class="manifest-kicker">What's inside one funded unit</span>
+            <span class="manifest-count">six components, one ecosystem</span>
           </div>
-          <div class="process-step">
-            <div class="dot"></div>
-            <div class="ps-label">Delivery</div>
-            <div class="ps-sub">Equipment reaches site</div>
-          </div>
-          <div class="process-step">
-            <div class="dot"></div>
-            <div class="ps-label">Installation</div>
-            <div class="ps-sub">Fitted &amp; tested in the Cath Lab</div>
-          </div>
-          <div class="process-step">
-            <div class="dot"></div>
-            <div class="ps-label">Commissioning</div>
-            <div class="ps-sub">Line moves to &ldquo;Completed&rdquo;</div>
+
+          <ol class="manifest-list">
+            <li class="manifest-item">
+              <span class="m-num">01</span>
+              <svg class="m-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>
+              <div class="m-text">
+                <h3>Patient monitor</h3>
+                <p>Continuous ECG, blood pressure, SpO&#8322;, and respiratory-rate tracking.</p>
+              </div>
+            </li>
+            <li class="manifest-item">
+              <span class="m-num">02</span>
+              <svg class="m-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 18v-6a8 8 0 0116 0v6"/><rect x="2" y="18" width="6" height="4" rx="1"/><rect x="16" y="18" width="6" height="4" rx="1"/></svg>
+              <div class="m-text">
+                <h3>Mechanical ventilator</h3>
+                <p>Assists or fully controls breathing for patients in respiratory distress.</p>
+              </div>
+            </li>
+            <li class="manifest-item">
+              <span class="m-num">03</span>
+              <svg class="m-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="10" width="20" height="7" rx="1.5"/><path d="M4 17v3M20 17v3M2 10V8a2 2 0 012-2h4"/></svg>
+              <div class="m-text">
+                <h3>Advanced ICU bed</h3>
+                <p>Electric, adjustable, with safety rails and an integrated scale.</p>
+              </div>
+            </li>
+            <li class="manifest-item">
+              <span class="m-num">04</span>
+              <svg class="m-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20M6 8l6-6 6 6M4 16c0 3 3.5 6 8 6s8-3 8-6"/></svg>
+              <div class="m-text">
+                <h3>Infusion &amp; syringe pumps</h3>
+                <p>Deliver fluids, medication, and nutrition at precise rates.</p>
+              </div>
+            </li>
+            <li class="manifest-item">
+              <span class="m-num">05</span>
+              <svg class="m-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="6" rx="1"/><path d="M7 9v12M12 9v12M17 9v12"/></svg>
+              <div class="m-text">
+                <h3>Headwall console</h3>
+                <p>Medical gas outlets and power supply at the bedside.</p>
+              </div>
+            </li>
+            <li class="manifest-item">
+              <span class="m-num">06</span>
+              <svg class="m-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 18v-5"/><path d="M8.5 10.5a5 5 0 017 0"/><path d="M6 8a8 8 0 0112 0"/><circle cx="12" cy="19.5" r="1.6" fill="currentColor" stroke="none"/></svg>
+              <div class="m-text">
+                <h3>Nurse call system</h3>
+                <p>A bedside button that instantly alerts on-duty nurses for urgent help.</p>
+              </div>
+            </li>
+          </ol>
+
+          <div class="manifest-foot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+            <p>Your sponsorship funds all six components seamlessly: a complete, working critical-care ecosystem, not just a single piece of equipment.</p>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</section>
 
-    <div class="folio"><span>One World One Family Mission</span><span>03</span></div>
-  </section>
+<!-- VISION BRIDGE: SADGURU'S MESSAGE -->
+<section id="vision" class="section-dark">
+  <div class="section-inner">
+    <div class="vision-grid reveal">
+      <figure class="vision-photo">
+        <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Sadhguru%20Sri%20Madhusudan%20Sai.jpg" alt="Sadguru Sri Madhusudan Sai" width="506" height="415" loading="lazy" decoding="async">
+      </figure>
+      <div class="vision-text">
+        <span class="eyebrow">In his own words</span>
+        <blockquote class="vision-msg">&ldquo;With deep gratitude to every donor, well-wisher, and hand that has helped build the Sri Sathya Sai Sitaram Jindal Block, Phase 1 of the building stands complete. The structure is up, Baba's statue is in place, and the ground floor, including the emergency ward and department offices, is ready and will be functional shortly. This is only the beginning. Phase 2 begins now, carrying this vision forward.&rdquo;</blockquote>
+        <span class="vision-attrib">Sadguru Sri Madhusudan Sai</span>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <!-- PAGE 4 — THE FULL ACCOUNT -->
-  <section class="a4-page pad">
-    <span class="eyebrow">The full account</span>
-    <h2 class="section-title">MoU 1 &ndash; SH CCC, line by line</h2>
-    <p class="section-kicker">Struck-through figures are original proposals, superseded by the revision on the previous page.</p>
+<!-- PHASE 1 UPDATE + GALLERY -->
+<section id="gallery" class="section-dark">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <span class="eyebrow">Phase 1 complete</span>
+      <h2 class="section-title">Phase 1 Structure Complete</h2>
+      <p>As of last November, the main building structure and the entire ground floor were successfully completed. Focus now shifts to Phase 2: completing the interiors of the remaining floors.</p>
+    </div>
 
-    <div class="page-flow">
-      <table class="acct-table">
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th class="num">Proposed</th>
-            <th class="num">Actual spent</th>
-            <th class="num">Reported</th>
-            <th class="num">Variance</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>(a) ICU Beds &ndash; 30 Nos.</td>
-            <td class="num">&#8377;10,00,00,000<span class="cr">&#8377;10.00 Cr</span></td>
-            <td class="num">&#8377;10,04,00,000</td>
-            <td class="num">&#8377;10,00,00,000</td>
-            <td class="num var-zero">&mdash;</td>
-            <td><span class="status-ok">Completed</span></td>
-          </tr>
-          <tr>
-            <td>(b) Cath Lab &amp; Robotics <em>(revised)</em></td>
-            <td class="num">&#8377;15,00,00,000<span class="was">was &#8377;5,00,00,000</span></td>
-            <td class="num">&mdash;</td>
-            <td class="num">&mdash;</td>
-            <td class="num var-pos">&#8377;15,00,00,000</td>
-            <td><span class="status-flag">Order placed</span></td>
-          </tr>
-          <tr>
-            <td>(c) Cardiac OT &ndash; 1 No.</td>
-            <td class="num">&#8377;5,00,00,000<span class="cr">&#8377;5.00 Cr</span></td>
-            <td class="num">&#8377;5,00,00,000</td>
-            <td class="num">&#8377;5,00,00,000</td>
-            <td class="num var-zero">&mdash;</td>
-            <td><span class="status-ok">Completed</span></td>
-          </tr>
-          <tr>
-            <td>(d) Robotics <em>(revised)</em></td>
-            <td class="num">&#8377;10,00,00,000<span class="was">was &#8377;20,00,00,000</span></td>
-            <td class="num">&#8377;10,00,00,000</td>
-            <td class="num">&#8377;10,00,00,000</td>
-            <td class="num var-zero">&mdash;</td>
-            <td><span class="status-ok">Completed</span></td>
-          </tr>
-          <tr>
-            <td>(e) Construction Costs</td>
-            <td class="num">&#8377;25,00,00,000<span class="cr">&#8377;25.00 Cr</span></td>
-            <td class="num">&#8377;25,00,00,000</td>
-            <td class="num">&#8377;25,00,00,000</td>
-            <td class="num var-zero">&mdash;</td>
-            <td><span class="status-ok">Completed</span></td>
-          </tr>
-          <tr class="total-row">
-            <td>Total</td>
-            <td class="num">&#8377;65,00,00,000</td>
-            <td class="num">&#8377;50,04,00,000</td>
-            <td class="num">&#8377;50,00,00,000</td>
-            <td class="num">&#8377;15,00,00,000</td>
-            <td>77% utilised</td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="carousel reveal" id="galleryCarousel">
+      <div class="carousel-viewport">
+        <div class="carousel-track" id="carouselTrack">
+          <div class="carousel-slide">
+            <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Baba.jpg" alt="Baba's statue, marking His 100th birthday" loading="eager" decoding="async">
+            <figcaption>Baba's statue &middot; 100th birthday</figcaption>
+          </div>
+          <div class="carousel-slide">
+            <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Front%20Image.jpg" alt="Front view of the hospital building" loading="lazy" decoding="async">
+            <figcaption>The building &middot; front view</figcaption>
+          </div>
+          <div class="carousel-slide">
+            <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Common%20Area.jpg" alt="Ground floor common area interior" loading="lazy" decoding="async">
+            <figcaption>Ground floor &middot; common area</figcaption>
+          </div>
+          <div class="carousel-slide">
+            <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/ICU%20ward.jpg" alt="ICU ward interior" loading="lazy" decoding="async">
+            <figcaption>The ICU ward</figcaption>
+          </div>
+          <div class="carousel-slide">
+            <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Lift%20Loby.jpg" alt="Ground floor lift lobby interior" loading="lazy" decoding="async">
+            <figcaption>Ground floor &middot; lift lobby</figcaption>
+          </div>
+          <div class="carousel-slide">
+            <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/OT.jpg" alt="Operation theatre interior" loading="lazy" decoding="async">
+            <figcaption>Operation theatre</figcaption>
+          </div>
+          <div class="carousel-slide">
+            <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Recption.jpg" alt="Reception area interior" loading="lazy" decoding="async">
+            <figcaption>Reception</figcaption>
+          </div>
+          <div class="carousel-slide">
+            <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Recption%202.jpg" alt="Reception area, second view" loading="lazy" decoding="async">
+            <figcaption>Reception &middot; second view</figcaption>
+          </div>
+        </div>
 
-      <p class="table-footnote">
-        <strong>Note.</strong> Proposed figures for (b) and (d) have been revised to reflect the confirmed &#8377;15,00,00,000
-        Cath Lab order, funded by shifting &#8377;10,00,00,000 from the Robotics balance. The MoU total proposed budget is
-        unchanged at &#8377;65,00,00,000, and the overall variance is unchanged at &#8377;15,00,00,000 &mdash; it now sits
-        entirely in the Cath Lab line, pending disbursement against the placed order.
-      </p>
+        <button class="car-arrow car-prev" id="carPrev" aria-label="Previous photo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="car-arrow car-next" id="carNext" aria-label="Next photo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <div class="car-counter"><span id="carCurrent">1</span> / <span id="carTotal">8</span></div>
+      </div>
 
-      <div class="status-key">
-        <span class="sk-item">&#9679; <strong>Completed</strong> &mdash; fully disbursed and reported</span>
-        <span class="sk-item">&#9650; <strong>Order placed</strong> &mdash; confirmed, pending disbursement</span>
+      <div class="carousel-thumbs" id="carouselThumbs">
+        <button class="car-thumb active" data-index="0" aria-label="Show slide 1"><img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Baba.jpg" alt="" loading="lazy"></button>
+        <button class="car-thumb" data-index="1" aria-label="Show slide 2"><img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Front%20Image.jpg" alt="" loading="lazy"></button>
+        <button class="car-thumb" data-index="2" aria-label="Show slide 3"><img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Common%20Area.jpg" alt="" loading="lazy"></button>
+        <button class="car-thumb" data-index="3" aria-label="Show slide 4"><img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/ICU%20ward.jpg" alt="" loading="lazy"></button>
+        <button class="car-thumb" data-index="4" aria-label="Show slide 5"><img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Lift%20Loby.jpg" alt="" loading="lazy"></button>
+        <button class="car-thumb" data-index="5" aria-label="Show slide 6"><img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/OT.jpg" alt="" loading="lazy"></button>
+        <button class="car-thumb" data-index="6" aria-label="Show slide 7"><img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Recption.jpg" alt="" loading="lazy"></button>
+        <button class="car-thumb" data-index="7" aria-label="Show slide 8"><img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Recption%202.jpg" alt="" loading="lazy"></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT & OPPORTUNITY -->
+<section id="impact" class="section-dark">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <span class="eyebrow">Impact &amp; opportunity</span>
+      <h2 class="section-title">One bed, sustained for decades</h2>
+      <p>An ICU bed sponsorship funds a complete, working critical-care unit: not a single treatment, but infrastructure that keeps serving patients for the life of the equipment.</p>
+    </div>
+
+    <div class="impact-numbers reveal">
+      <div class="impact-num-card">
+        <div class="stat-num" data-count="120" data-rangestart="100">100-120</div>
+        <div class="stat-label">Patients are treated each year with a single bed</div>
+      </div>
+      <div class="impact-num-card">
+        <div class="stat-num" data-count="2000" data-suffix="+">0+</div>
+        <div class="stat-label">Patients can be served by one bed across a 15-20 year working life</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CAMPAIGN VITALS -->
+<section id="vitals">
+  <div class="section-inner vitals-stack">
+    <div class="section-head reveal" style="max-width:none;">
+      <span class="eyebrow">Campaign vitals</span>
+      <h2 class="section-title">130 beds. Watch each one light up.</h2>
+    </div>
+
+    <div class="monitor reveal">
+      <span class="m-label">Beds sponsored</span>
+      <div class="monitor-readout" id="monitor-count">0<span>/ 130 beds sponsored</span></div>
+      <div class="monitor-bar-track"><div class="monitor-bar-fill" id="monitor-bar"></div></div>
+      <div class="monitor-foot"><span id="monitor-foot-left">30 beds sponsored</span><span id="monitor-foot-right">100 beds remaining</span></div>
+
+      <div class="ward-map">
+        <div class="wm-head">
+          <h3>The bed map</h3>
+          <div class="wm-legend">
+            <span><span class="wm-swatch done"></span>Sponsored</span>
+            <span><span class="wm-swatch open"></span>Waiting for a sponsor</span>
+          </div>
+        </div>
+        <div class="wm-grid" id="wardGrid" role="img" aria-label="Bed map: 30 of 130 beds sponsored"></div>
+        <p class="wm-note">Each cell represents a planned ICU bed. Your sponsorship brings the next critical-care unit into existence, permanently.</p>
+      </div>
+
+      <div class="naming-block">
+        <h3>A legacy that serves for decades</h3>
+        <p>A sponsored bed doesn't stop working once the initial gift is made. It serves as a permanent lifeline, delivering continuous, life-saving intervention to patients while giving their families vital peace of mind. By funding a bed in full, your name is permanently integrated into the facility, carrying your legacy forward in the lives it touches for years to come.</p>
+        <p class="naming-highlight">Open to CSR partners, families, and institutions. Sponsoring multiple beds is also welcome for larger commitments.</p>
+        <div class="price-tag">
+          <span class="amt">$28,000 USD</span>
+          <span class="amt2">/ &#8377;25,00,000 INR per bed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="section-dark">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <span class="eyebrow">How your pledge works</span>
+      <h2 class="section-title">Three steps from pledge to plaque</h2>
+    </div>
+    <div class="steps-grid reveal">
+      <div class="step-card">
+        <div class="s-num">1</div>
+        <h3>Make your pledge</h3>
+        <p>Choose your number of beds, sign, and submit the form below. Your signed pledge PDF downloads to your device and your email opens pre-addressed to our team. Attach the PDF and press send.</p>
+      </div>
+      <div class="step-card">
+        <div class="s-num">2</div>
+        <h3>Our team reaches out</h3>
+        <p>A team member gets in touch warmly and promptly to help with payment details, documentation, and the exact wording for your recognition plaque.</p>
+      </div>
+      <div class="step-card">
+        <div class="s-num">3</div>
+        <h3>Your name serves</h3>
+        <p>Your bed is commissioned with your gold plaque in place, treating patients free of charge for years to come.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLEDGE FORM -->
+<section id="pledge" class="pledge-section">
+  <div class="section-inner pledge-wrap">
+    <div class="pledge-intro reveal">
+      <span class="eyebrow">Pledge your support</span>
+      <h2 class="section-title">Sponsor an ICU Healing&nbsp;Bed</h2>
+      <p>Fill out your details below to generate your official pledge. Our team will review your submission and reach out personally to finalise your sponsorship, payment details, and the exact wording for your recognition plaque.</p>
+      <p class="pledge-quote">"The world is one family, and no one should be denied life's basic needs."</p>
+      <div class="pledge-video" style="margin-top:24px;">
+        <span class="eyebrow" style="display:block; margin-bottom:10px;">The making of the miracle</span>
+        <iframe width="100%" height="220" style="border-radius:4px; display:block;" src="https://www.youtube.com/embed/XIXrUaYZOy4?si=2fgWMw1im2lE_YVs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <p class="pledge-video-caption" style="margin-top:10px; font-size:14px; color:var(--gray);">There are moments in history that remind us what humanity is capable of, and this is one of them. Inspired by the vision of Sadguru Sri Madhusudan Sai, and built against every challenge and beyond every limitation, a miracle came to life, not for a few but for everyone. Watch the extraordinary journey behind the world's largest, totally free hospital, and witness what happens when people come together to build hope itself.</p>
       </div>
     </div>
 
-    <div class="folio"><span>One World One Family Mission</span><span>04</span></div>
-  </section>
+    <form class="pledge-form" id="pledgeForm">
+      <div class="calc-box">
+        <div>
+          <div class="calc-label">Number of beds</div>
+          <div class="calc-presets" id="calcPresets">
+            <button type="button" class="calc-preset-btn" data-beds="1">1</button>
+            <button type="button" class="calc-preset-btn" data-beds="3">3</button>
+            <button type="button" class="calc-preset-btn" data-beds="5">5</button>
+            <button type="button" class="calc-preset-btn" data-beds="10">10</button>
+            <button type="button" class="calc-preset-btn" data-beds="custom">Custom</button>
+          </div>
+        </div>
+        <div class="calc-bottom-row">
+          <div class="field" style="max-width:110px; margin-bottom:0;">
+            <label class="sr-only" for="bedCount">Number of beds</label>
+            <input type="text" id="bedCount" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" value="1" required style="text-align:center; font-weight:700; font-size:18px;">
+          </div>
+          <div class="calc-total">
+            <span id="totalUsd">$28,000</span>
+            <small><span id="totalInr">&#8377;25,00,000</span> INR total</small>
+          </div>
+        </div>
+      </div>
 
-  <!-- PAGE 5 — PLATES: FRONT VIEW + ICU WARD -->
-  <section class="a4-page split-plate-page">
-    <div class="split-plate">
-      <div class="plate-photo">
-        <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Front%20Image.jpg" alt="Front view of the hospital building" crossorigin="anonymous">
+      <div class="form-row">
+        <div class="field">
+          <label for="donorName">Donor name</label>
+          <input type="text" id="donorName" required placeholder="Full name" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="orgName">Organisation (optional)</label>
+          <input type="text" id="orgName" placeholder="Company / foundation" autocomplete="organization">
+        </div>
       </div>
-      <div class="plate-caption">
-        <div class="fig-no">Fig. 01</div>
-        <h3>Building &middot; front view</h3>
-        <p>Sri Sathya Sai Sitaram Jindal Block, Phase 1</p>
-      </div>
-    </div>
-    <div class="split-plate">
-      <div class="plate-photo">
-        <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/icu%20ward.jpg" alt="ICU ward with rows of beds" crossorigin="anonymous">
-      </div>
-      <div class="plate-caption">
-        <div class="fig-no">Fig. 02</div>
-        <h3>ICU ward</h3>
-        <p>Item (a) &middot; ICU Beds &ndash; 30 Nos., completed</p>
-      </div>
-    </div>
-  </section>
 
-  <!-- PAGE 6 — PLATES: OPERATION THEATRE + ROBOTICS PENDING -->
-  <section class="a4-page split-plate-page">
-    <div class="split-plate">
-      <div class="plate-photo">
-        <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/OT.jpg" alt="Operation theatre" crossorigin="anonymous">
+      <div class="form-row single">
+        <div class="field">
+          <label for="address">Address</label>
+          <input type="text" id="address" required placeholder="Street, city, country" autocomplete="street-address">
+        </div>
       </div>
-      <div class="plate-caption">
-        <div class="fig-no">Fig. 03</div>
-        <h3>Operation theatre</h3>
-        <p>Item (c) &middot; Cardiac OT &ndash; 1 No., completed</p>
-      </div>
-    </div>
-    <div class="split-plate">
-      <div class="plate-placeholder">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-9 9"/></svg>
-        <span>Photo pending</span>
-      </div>
-      <div class="plate-caption">
-        <div class="fig-no">Fig. 04</div>
-        <h3>Robotics</h3>
-        <p>Item (d) &middot; installation photo to follow</p>
-      </div>
-    </div>
-  </section>
 
-  <!-- PAGE 9 — CLOSING -->
-  <section class="a4-page closing-page">
-    <svg class="closing-pulse" viewBox="0 0 700 140" preserveAspectRatio="none">
-      <path d="M0,70 L260,70 L276,70 L288,20 L304,120 L320,70 L340,70 L700,70"
-        fill="none" stroke="#e2b869" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <p class="quote">&ldquo;The world is one family, and no one should be denied life's basic needs.&rdquo;</p>
-    <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/OWOF_LOGO_H_CREAM_DIGITAL_web600.png" alt="One World One Family Mission" crossorigin="anonymous">
-    <div class="org">Sri Madhusudan Sai Institute of Medical Sciences and Research</div>
-    <p class="tagline">Programmes in healthcare, education, and nutrition, across 100 countries &mdash; free of charge.</p>
-    <div class="contact">Prepared by One World One Family Mission &middot; capex@ssslsg.org</div>
-  </section>
+      <div class="form-row">
+        <div class="field">
+          <label for="mobile">Mobile</label>
+          <input type="tel" id="mobile" required placeholder="10-digit mobile number" autocomplete="tel" inputmode="numeric" pattern="[0-9]*" maxlength="15" title="Numbers only">
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" required placeholder="you@example.com" autocomplete="email">
+        </div>
+      </div>
 
+      <div class="form-row recog-row">
+        <div class="field">
+          <label for="recogName" id="recogNameLabel">Recognition name (exactly as it should appear on the plaque)</label>
+          <textarea id="recogName" rows="2" required placeholder="e.g. The Sharma Family or Maria &amp; John Carter" style="resize:vertical;"></textarea>
+          <p class="field-hint">Type it exactly as you'd like it engraved &mdash; one name, <strong>Maria &amp; John</strong>, or <strong>Maria, John &amp; Anita</strong>. Press <strong>Enter</strong> to start a new line on the plaque. The preview updates live and the text auto-shrinks so it never touches the plaque edges. For many people, consider a family or group name.</p>
+          <div class="same-name-row" id="sameNameRow" style="display:none;">
+            <input type="checkbox" id="sameNameAll" checked>
+            <label for="sameNameAll">Use this same name on all plaques</label>
+          </div>
+          <div class="individual-names-wrap" id="individualNamesWrap" style="display:none;"></div>
+        </div>
+        <div>
+          <div class="gold-plaque-wrap" id="plaqueWrap">
+            <div class="gold-plaque">
+              <div class="gp-supported">Supported by</div>
+              <div class="gp-names"><div class="gp-nameblock">Your Name / Organisation</div></div>
+            </div>
+          </div>
+          <div class="plaque-actions">
+            <button type="button" class="plaque-png-btn" id="plaquePngBtn">Download plaque preview (PNG)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="signature-box">
+        <span class="sig-heading">Digital signature</span>
+        <p class="sig-hint">Sign however you prefer: type your name, or draw your signature below.</p>
+        <div class="sig-row">
+          <div class="sig-field">
+            <label for="signature">Type your full name</label>
+            <input type="text" id="signature" placeholder="Your name">
+          </div>
+          <div class="sig-field sig-draw-field">
+            <label for="sigCanvas">Or draw your signature</label>
+            <canvas id="sigCanvas" width="360" height="90"></canvas>
+            <button type="button" class="sig-clear-btn" id="sigClearBtn">Clear</button>
+          </div>
+        </div>
+        <div class="confirm-row">
+          <input type="checkbox" id="confirmSig" required>
+          <label for="confirmSig">I confirm the signature above constitutes my digital signature and that the details in this pledge are accurate.</label>
+        </div>
+      </div>
+
+      <p class="submit-note"><strong>Download pledge</strong> saves your signed pledge as a PDF to your device only. <strong>Submit pledge</strong> does that too, and then opens your email &mdash; on phones and tablets that support sharing, the PDF is <strong>attached automatically</strong>; otherwise it opens your email client pre-addressed to capex@ssslsg.org and you'll need to attach the PDF that was just downloaded before pressing send. If email doesn't open automatically, you can always send the PDF yourself to <a href="mailto:capex@ssslsg.org" style="color:var(--red); font-weight:700;">capex@ssslsg.org</a>.</p>
+      <div class="pledge-actions">
+        <button type="button" class="download-btn" id="downloadPledgeBtn">Download pledge (PDF)</button>
+        <button type="submit" class="submit-btn">Submit pledge</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- CLOSING BAND -->
+<div class="closing-band">
+  <h2>100 beds require funding for full commissioning.</h2>
+  <p>Each sponsorship deploys a complete monitor, ventilator, bed, infusion system, headwall, and a nurse call system, ready to serve 100-120 patients a year, free of charge, with your name beside it.</p>
+  <a href="#pledge" class="btn-cream">Sponsor a bed today</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/OWOF_LOGO_H_CREAM_DIGITAL_web600.png" alt="One World One Family Mission" width="600" height="199" style="height:72px; width:auto; max-width:401px;" loading="lazy" decoding="async">
+  <p class="quote">"The world is one family, and no one should be denied life's basic needs."</p>
+  <p class="org">Sri Madhusudan Sai Institute of Medical Sciences and Research &middot; One World One Family Mission</p>
+  <p class="copyright">Programmes in healthcare, education, and nutrition, across 100 countries, free of charge.</p>
+</footer>
+
+<!-- STICKY MOBILE CTA -->
+<div id="mobile-cta"><a href="#pledge">Sponsor an ICU bed</a></div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+  <button class="lb-close" id="lbClose">Close &#10005;</button>
+  <figure>
+    <img id="lbImg" src="" alt="">
+    <figcaption id="lbCap"></figcaption>
+  </figure>
 </div>
 
 <script>
-document.getElementById('downloadBtn').addEventListener('click', async function(){
-  const btn = this;
-  const label = document.getElementById('downloadBtnLabel');
-  if(btn.disabled) return;
-  btn.disabled = true;
-  const originalLabel = label.textContent;
-
-  try{
-    if(document.fonts && document.fonts.ready){ await document.fonts.ready; }
-    if(!window.html2canvas || !window.jspdf){
-      label.textContent = 'Still loading\u2026';
-      await new Promise(res => setTimeout(res, 1200));
-    }
-    if(!window.html2canvas || !window.jspdf){
-      alert('The PDF library is still loading \u2014 please try again in a moment.');
-      return;
-    }
-
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
-    const pages = document.querySelectorAll('.a4-page');
-
-    for(let i = 0; i < pages.length; i++){
-      label.textContent = 'Rendering page ' + (i+1) + ' of ' + pages.length + '\u2026';
-      const canvas = await html2canvas(pages[i], {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#fbf8ef',
-        logging: false,
-      });
-      const imgData = canvas.toDataURL('image/jpeg', 0.93);
-      if(i > 0) pdf.addPage();
-      pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
-    }
-
-    label.textContent = 'Saving\u2026';
-    pdf.save('ICU-Fund-Utilisation-Report.pdf');
-  } catch(err){
-    console.error(err);
-    alert('Something went wrong preparing the PDF. Please try again.');
-  } finally {
-    label.textContent = originalLabel;
-    btn.disabled = false;
-  }
+// ---------- Hamburger menu ----------
+const menuToggle = document.getElementById('menuToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+function closeMenu(){
+  mobileMenu.classList.remove('open');
+  menuToggle.setAttribute('aria-expanded','false');
+  menuToggle.setAttribute('aria-label','Open menu');
+}
+menuToggle.addEventListener('click', function(){
+  const open = mobileMenu.classList.toggle('open');
+  menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
 });
+mobileMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click', closeMenu));
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeMenu(); });
+
+// ---------- Mobile field: digits only ----------
+(function(){
+  const mobileInput = document.getElementById('mobile');
+  if(mobileInput){
+    mobileInput.addEventListener('input', function(){
+      const digitsOnly = this.value.replace(/[^0-9]/g, '');
+      if(digitsOnly !== this.value) this.value = digitsOnly;
+    });
+    mobileInput.addEventListener('paste', function(e){
+      e.preventDefault();
+      const text = (e.clipboardData || window.clipboardData).getData('text');
+      const digitsOnly = text.replace(/[^0-9]/g, '');
+      const start = this.selectionStart, end = this.selectionEnd;
+      this.value = this.value.slice(0, start) + digitsOnly + this.value.slice(end);
+      const pos = start + digitsOnly.length;
+      this.setSelectionRange(pos, pos);
+    });
+  }
+})();
+
+// ---------- Lightbox ----------
+const lightbox = document.getElementById('lightbox');
+const lbImg = document.getElementById('lbImg');
+const lbCap = document.getElementById('lbCap');
+function openLightbox(src, caption, alt){
+  lbImg.src = src;
+  lbImg.alt = alt || '';
+  lbCap.textContent = caption || '';
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(){
+  lightbox.classList.remove('open');
+  lbImg.src = '';
+  document.body.style.overflow = '';
+}
+document.getElementById('lbClose').addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', e=>{ if(e.target === lightbox) closeLightbox(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && lightbox.classList.contains('open')) closeLightbox(); });
+
+document.querySelectorAll('.carousel-slide img, .vision-photo img').forEach(img=>{
+  img.addEventListener('click', function(){
+    const fig = img.closest('.carousel-slide');
+    const capEl = fig ? fig.querySelector('figcaption') : null;
+    const caption = img.dataset.caption || (capEl ? capEl.textContent.trim() : img.alt);
+    openLightbox(img.src, caption, img.alt);
+  });
+});
+
+// ---------- Gallery carousel ----------
+(function(){
+  const track = document.getElementById('carouselTrack');
+  if(!track) return;
+  const slides = Array.from(track.children);
+  const thumbs = Array.from(document.querySelectorAll('.car-thumb'));
+  const prevBtn = document.getElementById('carPrev');
+  const nextBtn = document.getElementById('carNext');
+  const currentEl = document.getElementById('carCurrent');
+  const totalEl = document.getElementById('carTotal');
+  const viewport = document.querySelector('.carousel-viewport');
+  let index = 0;
+  const total = slides.length;
+  totalEl.textContent = total;
+
+  function render(){
+    track.style.transform = 'translateX(-' + (index*100) + '%)';
+    currentEl.textContent = index+1;
+    thumbs.forEach((t,i)=> t.classList.toggle('active', i===index));
+    // Note: never scrollIntoView() the active thumb — the thumbnail grid is
+    // fully visible and scrollIntoView scrolls the whole PAGE, making the
+    // gallery jump when the arrows are clicked.
+  }
+  function goTo(i){
+    index = (i+total) % total;
+    render();
+  }
+  prevBtn.addEventListener('click', ()=>goTo(index-1));
+  nextBtn.addEventListener('click', ()=>goTo(index+1));
+  thumbs.forEach((t,i)=> t.addEventListener('click', ()=>goTo(i)));
+
+  // Keyboard arrows when carousel is focused/hovered
+  let hovering = false;
+  viewport.addEventListener('mouseenter', ()=>hovering=true);
+  viewport.addEventListener('mouseleave', ()=>hovering=false);
+  document.addEventListener('keydown', e=>{
+    if(!hovering) return;
+    if(e.key==='ArrowLeft') goTo(index-1);
+    if(e.key==='ArrowRight') goTo(index+1);
+  });
+
+  // Touch swipe
+  let touchStartX = null;
+  viewport.addEventListener('touchstart', e=>{ touchStartX = e.touches[0].clientX; }, {passive:true});
+  viewport.addEventListener('touchend', e=>{
+    if(touchStartX===null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if(Math.abs(dx) > 40){ dx < 0 ? goTo(index+1) : goTo(index-1); }
+    touchStartX = null;
+  }, {passive:true});
+
+  // Autoplay — but only while the reader is actually looking at it.
+  // The timer starts when ~90% of the carousel is inside the viewport
+  // (i.e. the whole picture is visible), pauses on hover, and stops
+  // entirely when the reader scrolls past. This way slide 1 is always
+  // what people see when they arrive, instead of a mid-rotation frame.
+  let autoplay = null;
+  let inView = false;
+  function startAutoplay(){
+    if(autoplay || !inView) return;
+    autoplay = setInterval(()=>{ if(!hovering && inView){ index = (index+1) % total; render(); } }, 5000);
+  }
+  function stopAutoplay(){
+    if(autoplay){ clearInterval(autoplay); autoplay = null; }
+  }
+  viewport.addEventListener('mouseenter', stopAutoplay);
+  viewport.addEventListener('mouseleave', startAutoplay);
+
+  if(typeof IntersectionObserver !== 'undefined'){
+    const carIo = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        inView = entry.isIntersecting;
+        if(inView) startAutoplay();
+        else stopAutoplay();
+      });
+    }, {threshold:0.9});
+    carIo.observe(viewport);
+  } else {
+    // No IntersectionObserver (very old webviews): behave as before
+    inView = true;
+    startAutoplay();
+  }
+
+  render();
+})();
 </script>
 
+<script>
+// ---------- IntersectionObserver fallback (very old browsers/webviews) ----------
+// If IO is unavailable, fire every callback immediately so no content stays hidden.
+if(typeof IntersectionObserver === 'undefined'){
+  window.IntersectionObserver = function(cb){
+    this._cb = cb;
+    this.observe = function(el){ const self=this; setTimeout(function(){ self._cb([{isIntersecting:true, target:el}], self); }, 0); };
+    this.unobserve = function(){};
+    this.disconnect = function(){};
+  };
+}
+
+// ---------- Config ----------
+const TOTAL_BEDS = 130;
+const SPONSORED_BEDS = 30;
+const RATE_USD = 28000;
+const RATE_INR = 2500000;
+
+// ---------- ECG scroll progress ----------
+const fillPath = document.getElementById('ecg-fill');
+const dot = document.getElementById('ecg-dot');
+const pctLabel = document.getElementById('ecg-pct');
+const ecgHeart = document.getElementById('ecg-heart');
+const pathLength = fillPath.getTotalLength ? fillPath.getTotalLength() : 1500;
+fillPath.style.strokeDasharray = pathLength;
+fillPath.style.strokeDashoffset = pathLength;
+
+function updateEcg(){
+  const scrollTop = window.scrollY || document.documentElement.scrollTop;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const ratio = docHeight > 0 ? Math.min(scrollTop / docHeight, 1) : 0;
+  fillPath.style.strokeDashoffset = pathLength - (pathLength * ratio);
+  if(typeof fillPath.getPointAtLength === 'function'){
+    const pt = fillPath.getPointAtLength(pathLength * ratio);
+    dot.setAttribute('cx', pt.x);
+    dot.setAttribute('cy', pt.y);
+  }
+  pctLabel.textContent = Math.round(ratio * 100) + '% read';
+  if(ratio >= 0.99){
+    ecgHeart.classList.add('show');
+    dot.style.opacity = '0';
+  } else {
+    ecgHeart.classList.remove('show');
+    dot.style.opacity = '1';
+  }
+}
+window.addEventListener('scroll', updateEcg, {passive:true});
+window.addEventListener('resize', updateEcg);
+updateEcg();
+
+// ---------- Sticky mobile CTA ----------
+const mobileCta = document.getElementById('mobile-cta');
+window.addEventListener('scroll', ()=>{
+  const y = window.scrollY;
+  // hide sticky CTA while the pledge form itself is on screen
+  const pledge = document.getElementById('pledge');
+  const r = pledge.getBoundingClientRect();
+  const onForm = r.top < window.innerHeight && r.bottom > 0;
+  if(y > 500 && !onForm) mobileCta.classList.add('show');
+  else mobileCta.classList.remove('show');
+}, {passive:true});
+
+// ---------- Reveal on scroll ----------
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('in-view');
+      io.unobserve(entry.target);
+    }
+  });
+},{threshold:0, rootMargin:'0px 0px -5% 0px'});
+revealEls.forEach(el=>io.observe(el));
+
+// Safety net: content must never stay permanently invisible — but it must
+// also never be revealed BEFORE the reader reaches it (that kills the scroll
+// animations). So instead of a blanket timer, sweep on scroll/resize and
+// reveal only elements that are actually on screen right now.
+function revealSweep(){
+  revealEls.forEach(function(el){
+    if(el.classList.contains('in-view')) return;
+    const r = el.getBoundingClientRect();
+    if(r.top < window.innerHeight && r.bottom > 0) el.classList.add('in-view');
+  });
+}
+let revealSweepQueued = false;
+function queueRevealSweep(){
+  if(revealSweepQueued) return;
+  revealSweepQueued = true;
+  requestAnimationFrame(function(){ revealSweepQueued = false; revealSweep(); });
+}
+window.addEventListener('scroll', queueRevealSweep, {passive:true});
+window.addEventListener('resize', queueRevealSweep);
+window.addEventListener('load', queueRevealSweep);
+
+// ---------- Count-up stats ----------
+const counters = document.querySelectorAll('.stat-num[data-count]');
+const counterIo = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const el = entry.target;
+      const target = parseInt(el.getAttribute('data-count'),10);
+      const suffix = el.getAttribute('data-suffix') || '';
+      const rangeStart = el.hasAttribute('data-rangestart') ? parseInt(el.getAttribute('data-rangestart'),10) : null;
+      const duration = 1400;
+      const start = performance.now();
+      function tick(now){
+        const p = Math.min((now-start)/duration, 1);
+        if(rangeStart !== null){
+          const current = Math.floor(rangeStart + p*(target-rangeStart));
+          el.textContent = rangeStart + '-' + current;
+        } else {
+          el.textContent = Math.floor(p*target) + suffix;
+        }
+        if(p<1) requestAnimationFrame(tick);
+        else el.textContent = (rangeStart !== null ? rangeStart + '-' + target : target+suffix);
+      }
+      requestAnimationFrame(tick);
+      counterIo.unobserve(el);
+    }
+  });
+},{threshold:0.5});
+counters.forEach(el=>counterIo.observe(el));
+
+// ---------- Mismatch illustration animation ----------
+const mismatch = document.getElementById('mismatch');
+const mmIo = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      mismatch.querySelectorAll('.mm-fill').forEach(f=>{
+        f.style.width = f.getAttribute('data-width') + '%';
+      });
+      mismatch.querySelectorAll('.mm-pct').forEach(el=>{
+        const target = parseInt(el.getAttribute('data-count'),10);
+        const start = performance.now();
+        function tick(now){
+          const p = Math.min((now-start)/1400, 1);
+          el.textContent = Math.floor(p*target) + '%';
+          if(p<1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      });
+      mmIo.unobserve(entry.target);
+    }
+  });
+},{threshold:0.4});
+mmIo.observe(mismatch);
+
+// ---------- Bed map: build 130 bed cells ----------
+const wardGrid = document.getElementById('wardGrid');
+const bedIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="10" width="18" height="6" rx="1"/><path d="M5 16v3M19 16v3"/></svg>';
+for(let i=0;i<TOTAL_BEDS;i++){
+  const cell = document.createElement('div');
+  cell.className = 'wm-cell';
+  cell.innerHTML = bedIcon;
+  cell.title = 'Bed ' + (i+1) + (i < SPONSORED_BEDS ? ': sponsored' : ': waiting for a sponsor');
+  wardGrid.appendChild(cell);
+}
+
+// ---------- Campaign monitor: bar + counter + bed light-up ----------
+const monitorBar = document.getElementById('monitor-bar');
+const monitorCount = document.getElementById('monitor-count');
+const monitorFootLeft = document.getElementById('monitor-foot-left');
+const monitorFootRight = document.getElementById('monitor-foot-right');
+const wmCells = wardGrid.querySelectorAll('.wm-cell');
+const reduceMotion = typeof window.matchMedia === 'function' ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false;
+let monitorStarted = false;
+
+// Scale labels under the bar always show the real totals (never "0 beds")
+monitorFootLeft.textContent = SPONSORED_BEDS + ' beds sponsored';
+monitorFootRight.textContent = (TOTAL_BEDS - SPONSORED_BEDS) + ' beds remaining';
+
+function setMonitorFinal(){
+  monitorBar.style.width = (SPONSORED_BEDS/TOTAL_BEDS)*100 + '%';
+  monitorCount.innerHTML = SPONSORED_BEDS + '<span>/ ' + TOTAL_BEDS + ' beds sponsored</span>';
+  for(let i=0;i<SPONSORED_BEDS;i++) wmCells[i].classList.add('lit');
+}
+
+function runMonitor(){
+  if(monitorStarted) return;
+  monitorStarted = true;
+  monitorBar.style.width = (SPONSORED_BEDS/TOTAL_BEDS)*100 + '%';
+  if(reduceMotion){
+    setMonitorFinal();
+  } else {
+    let n=0;
+    const iv = setInterval(()=>{
+      n++;
+      monitorCount.innerHTML = n + '<span>/ ' + TOTAL_BEDS + ' beds sponsored</span>';
+      wmCells[n-1].classList.add('lit');
+      if(n>=SPONSORED_BEDS){ clearInterval(iv); setMonitorFinal(); }
+    }, 55);
+  }
+}
+
+const monitorIo = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      runMonitor();
+      monitorIo.unobserve(entry.target);
+    }
+  });
+},{threshold:0.15});
+monitorIo.observe(document.querySelector('.monitor'));
+
+// Safety net: never leave the readout stuck at "0" — but never pre-finish it
+// either (that's what stopped the bed light-up animation from playing). The
+// fallback now only fires when the monitor is actually on screen, and it runs
+// the full animation rather than jumping to the end.
+const monitorEl = document.querySelector('.monitor');
+function monitorFallbackCheck(){
+  if(monitorStarted) return;
+  const r = monitorEl.getBoundingClientRect();
+  if(r.top < window.innerHeight * 0.9 && r.bottom > 0) runMonitor();
+}
+window.addEventListener('scroll', monitorFallbackCheck, {passive:true});
+window.addEventListener('load', monitorFallbackCheck);
+
+// ---------- Pledge calculator ----------
+const bedCount = document.getElementById('bedCount');
+const totalUsd = document.getElementById('totalUsd');
+const totalInr = document.getElementById('totalInr');
+
+function formatUsd(n){ return '$' + n.toLocaleString('en-US'); }
+function formatInr(n){ return '\u20b9' + n.toLocaleString('en-IN'); }
+// jsPDF's built-in fonts (Helvetica/Times/Courier) only support WinAnsi
+// characters and cannot render the rupee glyph — it shows up as a broken
+// superscript mark. Use this plain "Rs." form anywhere text is drawn
+// directly into the PDF.
+function formatInrPdf(n){ return 'Rs. ' + n.toLocaleString('en-IN'); }
+
+// The bed-count field accepts digits only — anything else is stripped instantly.
+function sanitizeBedInput(){
+  const cleaned = bedCount.value.replace(/[^0-9]/g,'');
+  if(bedCount.value !== cleaned) bedCount.value = cleaned;
+}
+
+function getBedsCount(){
+  let beds = parseInt(bedCount.value, 10);
+  if(!beds || beds < 1) beds = 1;
+  if(beds > TOTAL_BEDS) beds = TOTAL_BEDS; // can't pledge more beds than exist
+  return beds;
+}
+
+function updateCalc(){
+  const beds = getBedsCount();
+  totalUsd.textContent = formatUsd(beds*RATE_USD);
+  totalInr.textContent = formatInr(beds*RATE_INR);
+}
+bedCount.addEventListener('input', function(){
+  sanitizeBedInput();
+  syncPresetActive();
+  updateCalc();
+});
+bedCount.addEventListener('blur', function(){
+  sanitizeBedInput();
+  if(!bedCount.value || parseInt(bedCount.value,10) < 1) bedCount.value = '1';
+  if(parseInt(bedCount.value,10) > TOTAL_BEDS) bedCount.value = String(TOTAL_BEDS);
+  syncPresetActive();
+  updateCalc();
+  renderPlaques();
+});
+updateCalc();
+
+// ---------- Preset bed-count buttons ----------
+const presetBtns = document.querySelectorAll('#calcPresets .calc-preset-btn');
+function syncPresetActive(){
+  const current = parseInt(bedCount.value, 10);
+  let matched = false;
+  presetBtns.forEach(btn=>{
+    if(btn.dataset.beds !== 'custom' && parseInt(btn.dataset.beds,10) === current){
+      btn.classList.add('active');
+      matched = true;
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+  const customBtn = document.querySelector('#calcPresets .calc-preset-btn[data-beds="custom"]');
+  if(customBtn) customBtn.classList.toggle('active', !matched);
+}
+presetBtns.forEach(btn=>{
+  btn.addEventListener('click', function(){
+    if(btn.dataset.beds === 'custom'){
+      presetBtns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      bedCount.focus();
+      bedCount.select();
+      return;
+    }
+    bedCount.value = btn.dataset.beds;
+    syncPresetActive();
+    updateCalc();
+  });
+});
+syncPresetActive();
+
+// ---------- Live gold plaque preview (one plaque per bed) ----------
+// One field, typed exactly as it should be engraved ("Maria & John",
+// "A, B & C", a family name...). The text auto-shrinks so it never
+// touches the plaque edges.
+const recogInput = document.getElementById('recogName');
+const recogNameLabel = document.getElementById('recogNameLabel');
+const sameNameRow = document.getElementById('sameNameRow');
+const sameNameAllCheckbox = document.getElementById('sameNameAll');
+const individualNamesWrap = document.getElementById('individualNamesWrap');
+const plaqueWrap = document.getElementById('plaqueWrap');
+
+// Canonical string used everywhere: plaque, PDF, email, filename.
+function combinedRecogName(){
+  return recogInput.value.trim();
+}
+
+// Shrink an element's font until it fits its box — the plaque text never
+// overflows, it just scales down gracefully.
+function fitPlaqueText(el, maxWidth, maxHeight, maxSize, minSize){
+  let size = maxSize;
+  el.style.fontSize = size + 'px';
+  while(size > minSize && (el.scrollWidth > maxWidth || el.scrollHeight > maxHeight)){
+    size -= 0.5;
+    el.style.fontSize = size + 'px';
+  }
+}
+
+function getIndividualInputs(){
+  return Array.from(individualNamesWrap.querySelectorAll('[data-plaque-index]'));
+}
+
+// Build one text input per additional bed (bed 1 uses the main recogName field).
+// Only called when the SET of needed inputs changes (bed count or checkbox toggle) —
+// never on every keystroke, so typing doesn't lose focus or reset values.
+function renderIndividualInputs(beds){
+  const existingValues = {};
+  getIndividualInputs().forEach(inp=>{ existingValues[inp.dataset.plaqueIndex] = inp.value; });
+  individualNamesWrap.innerHTML = '';
+  for(let i=2; i<=beds; i++){
+    const field = document.createElement('div');
+    field.className = 'field individual-name-field';
+    field.style.marginBottom = '0';
+    const label = document.createElement('label');
+    label.setAttribute('for', 'recogName_' + i);
+    label.textContent = 'Plaque ' + i + ' name';
+    const input = document.createElement('textarea');
+    input.rows = 2;
+    input.style.resize = 'vertical';
+    input.id = 'recogName_' + i;
+    input.dataset.plaqueIndex = i;
+    input.placeholder = 'e.g. The Sharma Family or Rama & Sai';
+    input.value = existingValues[i] || '';
+    // Only refresh the gold-plaque previews on keystroke — never rebuild the inputs themselves
+    input.addEventListener('input', updatePlaqueVisuals);
+    field.appendChild(label);
+    field.appendChild(input);
+    individualNamesWrap.appendChild(field);
+  }
+}
+
+// Make sure the right individual-name inputs exist, without touching the DOM
+// (and losing focus/typed text) if the required set hasn't actually changed.
+function ensureIndividualInputs(beds, showIndividual){
+  individualNamesWrap.style.display = showIndividual ? 'flex' : 'none';
+  if(!showIndividual){
+    if(individualNamesWrap.children.length) individualNamesWrap.innerHTML = '';
+    return;
+  }
+  const needed = [];
+  for(let i=2; i<=beds; i++) needed.push(i);
+  const current = getIndividualInputs().map(inp=>parseInt(inp.dataset.plaqueIndex,10));
+  const unchanged = current.length === needed.length && current.every((v,idx)=>v === needed[idx]);
+  if(!unchanged) renderIndividualInputs(beds);
+}
+
+function getPlaqueNames(beds){
+  const primary = combinedRecogName() || 'Your Name / Organisation';
+  if(sameNameAllCheckbox.checked){
+    return Array(beds).fill(primary);
+  }
+  const names = [primary];
+  const inputs = getIndividualInputs();
+  for(let i=2; i<=beds; i++){
+    const inp = inputs.find(el=>parseInt(el.dataset.plaqueIndex,10) === i);
+    const val = inp ? inp.value.trim() : '';
+    names.push(val || primary);
+  }
+  return names;
+}
+
+// Redraw only the gold-plaque preview boxes — safe to call on every keystroke.
+function updatePlaqueVisuals(){
+  const beds = getBedsCount();
+  const names = getPlaqueNames(beds);
+  plaqueWrap.innerHTML = '';
+  names.forEach(function(name, idx){
+    const plaque = document.createElement('div');
+    plaque.className = 'gold-plaque';
+
+    const sup = document.createElement('div');
+    sup.className = 'gp-supported';
+    sup.textContent = 'Supported by';
+    plaque.appendChild(sup);
+
+    // The names are one centred, wrapping block ("A, B & C") that auto-shrinks
+    // so long entries scale down instead of clipping.
+    const nameBlock = document.createElement('div');
+    nameBlock.className = 'gp-names';
+    const textEl = document.createElement('div');
+    textEl.className = 'gp-nameblock';
+    textEl.textContent = name;
+    nameBlock.appendChild(textEl);
+    plaque.appendChild(nameBlock);
+
+    if(names.length > 1){
+      const tag = document.createElement('div');
+      tag.className = 'gp-bed-tag';
+      tag.textContent = 'Bed ' + (idx + 1);
+      plaque.appendChild(tag);
+    }
+    plaqueWrap.appendChild(plaque);
+  });
+  // Fit each plaque's text once layout has settled.
+  requestAnimationFrame(function(){
+    plaqueWrap.querySelectorAll('.gold-plaque').forEach(function(plaque){
+      const nameBlock = plaque.querySelector('.gp-names');
+      const textEl = plaque.querySelector('.gp-nameblock');
+      if(!nameBlock || !textEl) return;
+      fitPlaqueText(textEl, nameBlock.clientWidth, Math.max(nameBlock.clientHeight, 10), 26, 7);
+    });
+    updateBedPlaqueOverlay();
+  });
+}
+
+// The bed photo's plaque uses the SAME name as plaque 1 (the main recognition
+// field) — it's a single physical bed shown for illustration, not one plaque
+// per pledged bed. Text auto-shrinks the same way the gold plaque preview does.
+function updateBedPlaqueOverlay(){
+  const overlay = document.getElementById('bedPlaqueOverlay');
+  const labelEl = document.getElementById('bedPlaqueLabel');
+  const nameEl = document.getElementById('bedPlaqueName');
+  if(!overlay || !labelEl || !nameEl) return;
+  const w = overlay.clientWidth, h = overlay.clientHeight;
+  if(w < 4 || h < 4) return; // image not laid out yet
+  labelEl.style.fontSize = Math.max(w*0.05, 5) + 'px';
+  nameEl.textContent = combinedRecogName() || 'Your Name / Organisation';
+  fitPlaqueText(nameEl, w*0.9, h*0.6, w*0.12, w*0.025);
+}
+
+// Full refresh: label text + checkbox visibility + which inputs exist + the plaque previews.
+// Called on bed-count change and on the same-name checkbox toggle.
+function renderPlaques(){
+  const beds = getBedsCount();
+
+  // The "same name on all plaques" choice is only meaningful with more than one bed —
+  // hide it for a single bed so it doesn't confuse people.
+  sameNameRow.style.display = beds > 1 ? 'flex' : 'none';
+  if(beds <= 1 && !sameNameAllCheckbox.checked){
+    sameNameAllCheckbox.checked = true;
+  }
+
+  const showIndividual = !sameNameAllCheckbox.checked && beds > 1;
+
+  recogNameLabel.textContent = beds > 1
+    ? (sameNameAllCheckbox.checked ? 'Recognition name (used on all ' + beds + ' plaques)' : 'Plaque 1 name')
+    : 'Recognition name (exactly as it should appear on the plaque)';
+
+  ensureIndividualInputs(beds, showIndividual);
+  updatePlaqueVisuals();
+}
+
+// The main recognition-name field only ever needs to refresh the previews.
+recogInput.addEventListener('input', updatePlaqueVisuals);
+sameNameAllCheckbox.addEventListener('change', renderPlaques);
+bedCount.addEventListener('input', renderPlaques);
+presetBtns.forEach(function(btn){ btn.addEventListener('click', renderPlaques); });
+window.addEventListener('resize', updatePlaqueVisuals);
+window.addEventListener('load', updateBedPlaqueOverlay);
+renderPlaques();
+
+// ---------- Plaque preview PNG download ----------
+document.getElementById('plaquePngBtn').addEventListener('click', function(){
+  if(!window.html2canvas){
+    alert('The image library is still loading, please try again in a moment.');
+    return;
+  }
+  const btn = this;
+  const original = btn.textContent;
+  btn.textContent = 'Preparing image\u2026';
+  btn.disabled = true;
+  html2canvas(plaqueWrap, {scale:4, backgroundColor:null}).then(function(canvas){
+    const link = document.createElement('a');
+    const base = (combinedRecogName() || 'plaque').replace(/[^a-z0-9]+/gi,'-');
+    link.download = 'ICU-Bed-Plaque-' + base + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }).finally(function(){
+    btn.textContent = original;
+    btn.disabled = false;
+  });
+});
+
+// ---------- Drawn signature (canvas) ----------
+const sigCanvas = document.getElementById('sigCanvas');
+const sigCtx = sigCanvas.getContext('2d');
+let sigHasDrawing = false;
+let sigDrawing = false;
+
+let sigLastWidth = 0;
+function sigResize(){
+  if(!sigCtx) return;
+  const rect = sigCanvas.getBoundingClientRect();
+  // Mobile keyboards fire resize on open/close without changing the canvas
+  // width — re-initialising then would silently erase the drawn signature.
+  if(Math.abs(rect.width - sigLastWidth) < 1) return;
+  sigLastWidth = rect.width;
+  const ratio = window.devicePixelRatio || 1;
+  sigCanvas.width = rect.width * ratio;
+  sigCanvas.height = rect.height * ratio;
+  sigCtx.scale(ratio, ratio);
+  sigCtx.lineWidth = 2;
+  sigCtx.lineCap = 'round';
+  sigCtx.strokeStyle = '#2d2d2d';
+}
+sigResize();
+window.addEventListener('resize', function(){ sigResize(); sigHasDrawing = false; });
+
+function sigPos(e){
+  const rect = sigCanvas.getBoundingClientRect();
+  const point = e.touches ? e.touches[0] : e;
+  return {x: point.clientX - rect.left, y: point.clientY - rect.top};
+}
+function sigStart(e){
+  if(!sigCtx) return;
+  e.preventDefault();
+  sigDrawing = true;
+  const p = sigPos(e);
+  sigCtx.beginPath();
+  sigCtx.moveTo(p.x, p.y);
+}
+function sigMove(e){
+  if(!sigDrawing) return;
+  e.preventDefault();
+  const p = sigPos(e);
+  sigCtx.lineTo(p.x, p.y);
+  sigCtx.stroke();
+  sigHasDrawing = true;
+}
+function sigEnd(){ sigDrawing = false; }
+
+sigCanvas.addEventListener('mousedown', sigStart);
+sigCanvas.addEventListener('mousemove', sigMove);
+window.addEventListener('mouseup', sigEnd);
+sigCanvas.addEventListener('touchstart', sigStart);
+sigCanvas.addEventListener('touchmove', sigMove);
+sigCanvas.addEventListener('touchend', sigEnd);
+
+document.getElementById('sigClearBtn').addEventListener('click', function(){
+  sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+  sigHasDrawing = false;
+});
+
+// ---------- Collect pledge data ----------
+function collectPledge(){
+  const beds = getBedsCount();
+  return {
+    beds,
+    donor: document.getElementById('donorName').value.trim(),
+    org: document.getElementById('orgName').value.trim(),
+    address: document.getElementById('address').value.trim(),
+    mobile: document.getElementById('mobile').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    recog: combinedRecogName(),
+    plaqueNames: getPlaqueNames(beds),
+    sameNameAll: sameNameAllCheckbox.checked,
+    typedSig: document.getElementById('signature').value.trim(),
+    totalUsd: formatUsd(beds*RATE_USD),
+    totalInr: formatInr(beds*RATE_INR),
+    totalInrPdf: formatInrPdf(beds*RATE_INR),
+    date: new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'long', year:'numeric'})
+  };
+}
+
+// ---------- Generate pledge PDF (signature embedded) ----------
+let cachedLogo = null;
+async function getLogoDataUrl(){
+  if(cachedLogo) return cachedLogo;
+  try{
+    const resp = await fetch('https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/OWOF_LOGO_H_RED_DIGITAL_web600.png');
+    const blob = await resp.blob();
+    cachedLogo = await new Promise(res=>{
+      const r = new FileReader();
+      r.onload = ()=>res(r.result);
+      r.readAsDataURL(blob);
+    });
+    return cachedLogo;
+  }catch(e){ return null; }
+}
+
+// Builds the pledge PDF and returns {doc, fname} without saving it anywhere —
+// callers decide whether to download it, share/attach it, or both.
+async function buildPledgePdfDoc(){
+  if(!window.jspdf || !window.jspdf.jsPDF){
+    alert('The PDF library is still loading, please try again in a moment.');
+    return null;
+  }
+  const d = collectPledge();
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:'mm', format:'a4'});
+  const W = 210, H = 297, M = 20;
+  const RED = [126,35,32], CHAR = [45,45,45], GRAY = [86,86,86], CREAM = [252,251,242], GOLD = [211,181,112];
+  const BOTTOM = 278; // lowest y content may reach before forcing a new page
+  const FOOTER_H = 34; // vertical space the closing quote block needs
+
+  function fillPage(){
+    doc.setFillColor(...CREAM);
+    doc.rect(0, 0, W, H, 'F');
+  }
+
+  // Adds a new page, refills the cream background, and draws a slim
+  // continuation header. Returns the y position content should resume at.
+  function addContinuationPage(label){
+    doc.addPage();
+    fillPage();
+    doc.setDrawColor(...RED); doc.setLineWidth(0.5);
+    doc.line(M, 20, W-M, 20);
+    doc.setTextColor(...RED); doc.setFont('helvetica','bold'); doc.setFontSize(11);
+    doc.text('ICU HEALING BED SPONSORSHIP PLEDGE (continued)', M, 15);
+    if(label){
+      doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(...GRAY);
+      doc.text(label, M, 26);
+      return 34;
+    }
+    return 28;
+  }
+
+  // Ensures `needed` mm of space remains before BOTTOM; if not, starts a new page.
+  function ensureSpace(y, needed, label){
+    if(y + needed > BOTTOM){
+      return addContinuationPage(label);
+    }
+    return y;
+  }
+
+  fillPage();
+
+  // Logo
+  const logo = await getLogoDataUrl();
+  if(logo){ doc.addImage(logo, 'PNG', M, 14, 60, 60*199/600); }
+
+  // Title
+  let y = 46;
+  doc.setDrawColor(...RED); doc.setLineWidth(0.7);
+  doc.line(M, y-6, W-M, y-6);
+  doc.setTextColor(...RED);
+  doc.setFont('helvetica','bold'); doc.setFontSize(19);
+  doc.text('ICU HEALING BED SPONSORSHIP PLEDGE', M, y+3);
+  doc.setTextColor(...GRAY);
+  doc.setFont('helvetica','normal'); doc.setFontSize(10);
+  doc.text('Sri Madhusudan Sai Institute of Medical Sciences and Research  \u00b7  One World One Family Mission', M, y+10);
+
+  // Pledge summary box
+  y = 66;
+  doc.setFillColor(126,35,32);
+  doc.roundedRect(M, y, W-2*M, 22, 1.5, 1.5, 'F');
+  doc.setTextColor(...CREAM);
+  doc.setFont('helvetica','bold'); doc.setFontSize(11);
+  const bedWord = d.beds === 1 ? 'ICU Healing Bed' : 'ICU Healing Beds';
+  doc.text('Pledge: ' + d.beds + ' ' + bedWord, M+7, y+9);
+  doc.setFontSize(13);
+  doc.text('Total: ' + d.totalUsd + ' USD  /  ' + d.totalInrPdf + ' INR', M+7, y+17);
+
+  // Donor details
+  y = 100;
+  doc.setTextColor(...RED); doc.setFont('helvetica','bold'); doc.setFontSize(10);
+  doc.text('DONOR DETAILS', M, y);
+  doc.setDrawColor(...RED); doc.setLineWidth(0.3); doc.line(M, y+2, W-M, y+2);
+  y += 10;
+  const rows = [
+    ['Donor name', d.donor],
+    ['Organisation', d.org || '-'],
+    ['Address', d.address],
+    ['Mobile', d.mobile],
+    ['Email', d.email]
+  ];
+  doc.setFontSize(11);
+  rows.forEach(([k,v])=>{
+    const lines = doc.splitTextToSize(v || '-', W-2*M-52);
+    const rowH = 8 * lines.length;
+    y = ensureSpace(y, rowH, 'Donor details');
+    doc.setTextColor(...GRAY); doc.setFont('helvetica','bold'); doc.setFontSize(11);
+    doc.text(k, M, y);
+    doc.setTextColor(...CHAR); doc.setFont('helvetica','normal');
+    doc.text(lines, M+52, y);
+    y += rowH;
+  });
+
+  // Gold recognition plaque(s) — one per sponsored bed. Every plaque is
+  // shown in full (never truncated); the layout simply continues onto
+  // additional pages when it runs out of room.
+  y += 6;
+  y = ensureSpace(y, 30, 'Recognition plaques');
+  doc.setTextColor(...RED); doc.setFont('helvetica','bold'); doc.setFontSize(10);
+  doc.text(d.plaqueNames.length > 1 ? 'RECOGNITION PLAQUES' : 'RECOGNITION PLAQUE', M, y);
+  doc.setDrawColor(...RED); doc.line(M, y+2, W-M, y+2);
+  y += 8;
+
+  // Plaque boxes are drawn at the plate's real 10in x 3.5in proportion (height = width x 0.35).
+  // 1 plaque: one large plate. 2-4: two per row. 5+: three per row.
+  const count = d.plaqueNames.length;
+  const boxW = count === 1 ? 77 : (count <= 4 ? 56 : 38);
+  const boxH = Math.round(boxW * 0.35 * 10) / 10;
+  const gapX = 5, gapY = count > 1 ? 8 : 5;
+  const perRow = Math.max(1, Math.floor((W - 2*M + gapX) / (boxW + gapX)));
+  const totalRows = Math.ceil(count / perRow);
+  // Font sizes scale with the plate width so the layout stays proportionate.
+  const fs = boxW / 110;
+
+  // The names are one centred, wrapping block ("A, B & C") that auto-shrinks
+  // until every line fits inside the plate — mirrors the on-page preview.
+  function drawPlaqueNames(name, bx, by){
+    const cx = bx + boxW/2;
+    const innerW = boxW * 0.86;
+    const topY = by + boxH * 0.26;   // just below the label
+    const availH = boxH * 0.66;
+    let size = 26 * fs;
+    const minSize = 4.5;
+    let lines, lineH, blockH;
+    doc.setFont('helvetica','bold');
+    while(true){
+      doc.setFontSize(size);
+      lines = doc.splitTextToSize(name || '-', innerW);
+      lineH = size * 0.3528 * 1.22;   // pt -> mm, plus line-height
+      blockH = lines.length * lineH;
+      const tooWide = lines.some(function(l){ return doc.getTextWidth(l) > innerW; });
+      if((blockH <= availH && !tooWide) || size <= minSize) break;
+      size -= 0.5;
+    }
+    doc.setTextColor(126,35,32);
+    let ty = topY + (availH - blockH)/2 + lineH * 0.78;
+    lines.forEach(function(l){
+      doc.text(l, cx, ty, {align:'center'});
+      ty += lineH;
+    });
+  }
+
+  for(let row = 0; row < totalRows; row++){
+    y = ensureSpace(y, boxH + (count > 1 ? 5 : 0), 'Recognition plaques (continued)');
+    for(let col = 0; col < perRow; col++){
+      const idx = row*perRow + col;
+      if(idx >= count) break;
+      const name = d.plaqueNames[idx];
+      const bx = M + col*(boxW+gapX), by = y, cx = bx + boxW/2;
+      // Plain soft-gold plate — no border, no keyline, no underline; matches
+      // the on-screen preview exactly.
+      doc.setFillColor(...GOLD);
+      doc.roundedRect(bx, by, boxW, boxH, boxW*0.03, boxW*0.03, 'F');
+      // "SUPPORTED BY" label tucked at the top — the donor's name is the
+      // hero and owns everything beneath it.
+      doc.setTextColor(126,35,32);
+      doc.setFont('helvetica','normal'); doc.setFontSize(Math.max(8*fs, 4.5));
+      doc.text('SUPPORTED BY', cx, by + boxH*0.16, {align:'center'});
+      drawPlaqueNames(name, bx, by);
+      if(count > 1){
+        doc.setTextColor(...GRAY); doc.setFont('helvetica','normal'); doc.setFontSize(6);
+        doc.text('Bed ' + (idx+1), cx, by + boxH + 3.5, {align:'center'});
+      }
+    }
+    y += boxH + gapY;
+  }
+
+  // Signature
+  y += 6;
+  y = ensureSpace(y, 34, 'Digital signature');
+  doc.setTextColor(...RED); doc.setFont('helvetica','bold'); doc.setFontSize(10);
+  doc.text('DIGITAL SIGNATURE', M, y);
+  doc.setDrawColor(...RED); doc.setLineWidth(0.3); doc.line(M, y+2, W-M, y+2);
+  y += 10;
+  if(sigHasDrawing){
+    const sigData = sigCanvas.toDataURL('image/png');
+    doc.addImage(sigData, 'PNG', M, y-2, 64, 16);
+    y += 18;
+  }
+  if(d.typedSig){
+    doc.setTextColor(...CHAR); doc.setFont('times','italic'); doc.setFontSize(16);
+    doc.text(d.typedSig, M, y+4);
+    y += 10;
+  }
+  doc.setTextColor(...GRAY); doc.setFont('helvetica','normal'); doc.setFontSize(10);
+  doc.text('Signed by: ' + (d.donor || d.typedSig || '-') + '    \u00b7    Date: ' + d.date, M, y+6);
+  doc.setFontSize(8.5);
+  doc.text('The signatory confirms this signature constitutes their digital signature and that the details in this pledge are accurate.', M, y+12);
+  y += 12;
+
+  // Footer quote — always pinned to the bottom of whichever page it ends up on
+  if(y + FOOTER_H > H - 6){
+    addContinuationPage();
+  }
+  doc.setDrawColor(...RED); doc.setLineWidth(0.7);
+  doc.line(M, 272, W-M, 272);
+  doc.setTextColor(...RED); doc.setFont('times','italic'); doc.setFontSize(11);
+  doc.text('"The world is one family, and no one should be denied life\'s basic needs."', W/2, 280, {align:'center'});
+  doc.setTextColor(...GRAY); doc.setFont('helvetica','normal'); doc.setFontSize(8.5);
+  doc.text('Please email this signed pledge to capex@ssslsg.org', W/2, 287, {align:'center'});
+
+  // Page numbers (only shown when the pledge spans more than one page)
+  const pageCount = doc.internal.getNumberOfPages();
+  if(pageCount > 1){
+    for(let p = 1; p <= pageCount; p++){
+      doc.setPage(p);
+      doc.setTextColor(...GRAY); doc.setFont('helvetica','normal'); doc.setFontSize(8);
+      doc.text('Page ' + p + ' of ' + pageCount, W-M, H-6, {align:'right'});
+    }
+  }
+
+  const fname = 'ICU-Bed-Pledge-' + (d.recog || d.donor || 'donor').replace(/[^a-z0-9]+/gi,'-') + '.pdf';
+  return {doc, fname};
+}
+
+// Downloads the PDF to the device (used by both buttons).
+function downloadPledgePdf(doc, fname){
+  doc.save(fname);
+}
+
+// Tries to hand the PDF to the OS share sheet as a real file attachment
+// (works on most modern mobile browsers). Returns true if a share sheet was
+// successfully presented — the caller should NOT also fall back to mailto
+// in that case, since the person is already mid-share. Returns false if the
+// platform can't share files at all, so the caller can fall back cleanly.
+async function sharePledgePdf(doc, fname, subject, body){
+  try{
+    if(!navigator.canShare || !navigator.share) return false;
+    const blob = doc.output('blob');
+    const file = new File([blob], fname, {type:'application/pdf'});
+    if(!navigator.canShare({files:[file]})) return false;
+    await navigator.share({files:[file], title:subject, text:body});
+    return true;
+  }catch(e){
+    // AbortError = the person cancelled the share sheet themselves; treat
+    // that as handled (don't also pop open a mailto behind their back).
+    if(e && e.name === 'AbortError') return true;
+    return false;
+  }
+}
+
+// ---------- Build pledge text (shared by mailto submit) ----------
+function buildPledge(){
+  const beds = getBedsCount();
+  const donor = document.getElementById('donorName').value.trim();
+  const org = document.getElementById('orgName').value.trim();
+  const address = document.getElementById('address').value.trim();
+  const mobile = document.getElementById('mobile').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const recog = combinedRecogName();
+  const plaqueNames = getPlaqueNames(beds);
+  const typedSig = document.getElementById('signature').value.trim();
+  const sig = typedSig || (sigHasDrawing ? 'Signed by hand (drawn signature captured)' : '');
+  const date = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'long', year:'numeric'});
+
+  const subject = 'ICU Bed Sponsorship Pledge - ' + recog.replace(/\s*\n\s*/g, ' / ');
+  const bedWord = beds === 1 ? 'bed' : 'beds';
+  const body = [
+    'Dear team,',
+    '',
+    'I would like to support ' + beds + ' ICU healing ' + bedWord + '. My signed pledge PDF has been downloaded to my device and is attached to this email. My details are also below. Kindly let me know the further process.',
+    '',
+    'ICU HEALING BED SPONSORSHIP PLEDGE',
+    'Sri Madhusudan Sai Institute of Medical Sciences and Research / One World One Family Mission',
+    '',
+    'Number of beds: ' + beds,
+    'Total pledge amount: ' + formatUsd(beds*RATE_USD) + ' / ' + formatInr(beds*RATE_INR) + ' INR',
+    '',
+    'Donor name: ' + donor,
+    'Organisation: ' + (org || '-'),
+    'Address: ' + address,
+    'Mobile: ' + mobile,
+    'Email: ' + email,
+    '',
+    (plaqueNames.length > 1
+      ? (plaqueNames.length <= 15
+          ? 'Recognition names (one plaque per bed):\n' + plaqueNames.map(function(n,i){ return '  Bed ' + (i+1) + ': ' + n; }).join('\n')
+          : 'Recognition names: ' + plaqueNames.length + ' plaques - full per-bed list is in the attached PDF.')
+      : 'Recognition name (plaque): ' + recog),
+    '',
+    'Digital signature: ' + sig,
+    'Date: ' + date,
+    '',
+    '"The world is one family, and no one should be denied life\'s basic needs."',
+    '',
+    'Thanks and regards,',
+    (donor || typedSig || 'Name')
+  ].join('\n');
+  return {subject, body};
+}
+
+// ---------- Signature validation ----------
+function signatureOk(){
+  const typedSig = document.getElementById('signature').value.trim();
+  if(!typedSig && !sigHasDrawing){
+    alert('Please type your name or draw your signature to sign the pledge.');
+    return false;
+  }
+  return true;
+}
+
+// ---------- Download pledge (PDF only, no email) ----------
+document.getElementById('downloadPledgeBtn').addEventListener('click', async function(){
+  const form = document.getElementById('pledgeForm');
+  if(!form.reportValidity()) return; // shows the browser's native required-field messages
+  if(!signatureOk()) return;
+  const btn = this;
+  const original = btn.textContent;
+  btn.textContent = 'Preparing PDF\u2026';
+  btn.disabled = true;
+  try{
+    const built = await buildPledgePdfDoc();
+    if(built) downloadPledgePdf(built.doc, built.fname);
+  } finally {
+    setTimeout(function(){ btn.textContent = original; btn.disabled = false; }, 800);
+  }
+});
+
+// ---------- Submit pledge -> PDF attached via share sheet, or download + mailto ----------
+document.getElementById('pledgeForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  if(!signatureOk()) return;
+  const btn = document.querySelector('.submit-btn');
+  const original = btn.textContent;
+  btn.textContent = 'Preparing your pledge\u2026';
+  btn.disabled = true;
+  try{
+    const built = await buildPledgePdfDoc();
+    if(!built) return;
+    const {subject, body} = buildPledge();
+    const shared = await sharePledgePdf(built.doc, built.fname, subject, body);
+    if(!shared){
+      // Fallback for browsers that can't attach files directly: download the
+      // PDF, then open the mail client with everything pre-filled so the
+      // person only has to attach the file they just downloaded.
+      downloadPledgePdf(built.doc, built.fname);
+      setTimeout(function(){
+        window.location.href = 'mailto:capex@ssslsg.org?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+      }, 600);
+    }
+  } finally {
+    setTimeout(function(){ btn.textContent = original; btn.disabled = false; }, 1200);
+  }
+});
+
+</script>
 </body>
 </html>
