@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fund Utilisation Report | One World One Family Mission</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+
+<style>
+@font-face{font-family:"Gantari";src:url("https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Gantari-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:"Gantari";src:url("https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Gantari-SemiBold.ttf") format("truetype");font-weight:600;font-style:normal;font-display:swap;}
+@font-face{font-family:"Gantari";src:url("https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Gantari-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap;}
+@font-face{font-family:"Gentium";src:url("https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Gentium-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:"Gentium";src:url("https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Gentium-Italic.ttf") format("truetype");font-weight:400;font-style:italic;font-display:swap;}
+@font-face{font-family:"Gentium";src:url("https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Gentium-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap;}
+
+:root{
+  --ink:#241f1c;
+  --ink-soft:#5b534c;
+  --brick:#7e2320;
+  --brick-deep:#4a1513;
+  --brass:#a67c2e;
+  --brass-deep:#7d5c20;
+  --paper:#fbf8ef;
+  --paper-shade:#efe8d6;
+  --hair:rgba(36,31,28,0.18);
+  --hair-soft:rgba(36,31,28,0.10);
+  --green:#3d6b47;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:"Gentium", serif;
+  background:#c9c0a8;
+  color:var(--ink);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:"Gentium",serif;}
+.label,.eyebrow,.num-font{font-family:"Gantari",sans-serif;}
+.tab{font-variant-numeric:tabular-nums;}
+
+/* ============ TOOLBAR (utility chrome, not part of the report) ============ */
+.toolbar{
+  position:fixed; top:0; left:0; width:100%; z-index:50;
+  display:flex; align-items:center; justify-content:space-between; gap:14px;
+  padding:13px 5vw; background:var(--ink);
+}
+.toolbar .tb-label{font-family:"Gantari",sans-serif; font-size:11.5px; color:rgba(251,248,239,0.65); letter-spacing:.04em;}
+.download-btn{
+  display:inline-flex; align-items:center; gap:9px; background:var(--brass); color:var(--ink);
+  font-family:"Gantari",sans-serif; font-weight:700; font-size:12px; letter-spacing:.05em;
+  text-transform:uppercase; padding:10px 20px; border:none; border-radius:2px; cursor:pointer;
+  transition:background .2s ease, transform .2s ease;
+}
+.download-btn:hover{background:#c79a3d; transform:translateY(-1px);}
+.download-btn:disabled{opacity:.6; cursor:default; transform:none;}
+.download-btn svg{width:15px; height:15px; flex-shrink:0;}
+
+/* ============ PAGE CANVAS ============ */
+.pages-wrap{padding:72px 0 60px;}
+.a4-page{
+  width:210mm; min-height:297mm; margin:0 auto 30px; background:var(--paper);
+  box-shadow:0 18px 50px rgba(20,16,12,0.35); position:relative; overflow:hidden;
+}
+.a4-page.pad{padding:20mm 18mm 17mm; display:flex; flex-direction:column;}
+.page-flow{flex:1; display:flex; flex-direction:column; justify-content:space-between; min-height:0;}
+@media (max-width:900px){
+  .a4-page{width:96vw; min-height:auto;}
+  .toolbar{flex-direction:column; align-items:flex-start; gap:8px;}
+}
+
+/* running footer on content pages */
+.folio{
+  position:absolute; left:18mm; right:18mm; bottom:10mm;
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-family:"Gantari",sans-serif; font-size:8px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink-soft); opacity:.72; border-top:0.75px solid var(--hair); padding-top:6px;
+}
+
+.eyebrow{
+  font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; font-weight:700;
+  color:var(--brass-deep); margin-bottom:10px; display:block;
+}
+h2.section-title{font-family:"Gentium",serif; font-size:23px; font-weight:700; color:var(--ink); margin-bottom:2px; line-height:1.15;}
+.section-kicker{font-size:11.5px; color:var(--ink-soft); font-style:italic; margin-top:4px; margin-bottom:2px;}
+
+/* ============ PAGE 1 — COVER ============ */
+.cover-page{padding:0;}
+.cover-photo{position:absolute; inset:0; z-index:0;}
+.cover-photo img{width:100%; height:100%; object-fit:cover; display:block;}
+.cover-scrim{
+  position:absolute; left:0; right:0; bottom:0; height:58%; z-index:1;
+  background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAGQCAYAAACJccGfAAAAV0lEQVR4nO3PMQrAIBQE0TVYSg6Q+x/UVixFogzzy0WeTPnelvGeTFeTFMhgHGZA1xqHGdC1xmEGdK1xP/yy8EJUVFRUVHQDSmoRFRUVFb0YJbWIip5HO8tMBiGdUy5sAAAAAElFTkSuQmCC);
+  background-size:100% 100%;
+}
+.cover-mark-wrap{
+  position:absolute; top:12mm; left:14mm; z-index:2; background:var(--paper);
+  padding:3mm 5mm; border-radius:2px; box-shadow:0 2px 10px rgba(0,0,0,0.18);
+  display:inline-flex;
+}
+.cover-mark{display:block; height:8mm; width:auto;}
+.cover-content{position:absolute; left:16mm; right:16mm; bottom:16mm; z-index:2; color:var(--paper);}
+.cover-content .eyebrow{color:#e2b869; margin-bottom:14px;}
+.cover-content h1{
+  font-family:"Gentium",serif; font-weight:700; font-size:40pt; line-height:1.0; letter-spacing:-0.01em;
+  margin-bottom:8mm; text-shadow:0 2px 18px rgba(0,0,0,0.25);
+}
+.cover-pulse{width:100%; height:9mm; margin-bottom:7mm; opacity:.9;}
+.cover-meta-row{
+  display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px 18px;
+  border-top:0.75px solid rgba(251,248,239,0.35); padding-top:5mm;
+  font-family:"Gantari",sans-serif; font-size:10.5px; letter-spacing:.03em; color:rgba(251,248,239,0.86);
+}
+.cover-meta-row strong{color:var(--paper); font-weight:700;}
+.cover-institute{font-size:13px; font-weight:700; margin-bottom:3mm; color:var(--paper);}
+
+/* ============ PAGE 2 — THE LEDGER ============ */
+.ledger-head{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:16mm; padding-bottom:6mm; border-bottom:0.75px solid var(--hair);}
+.ledger-head img{height:8mm; width:auto;}
+.ledger-head .doc-meta{text-align:right; font-family:"Gantari",sans-serif; font-size:9.5px; color:var(--ink-soft); line-height:1.7;}
+.ledger-head .doc-meta strong{color:var(--ink); font-weight:700;}
+
+.ledger-rows{margin-top:8mm;}
+.ledger-row{
+  display:flex; align-items:baseline; justify-content:space-between; gap:14px;
+  padding:9px 0; border-bottom:0.75px solid var(--hair-soft);
+}
+.ledger-row .lr-label{font-family:"Gantari",sans-serif; font-size:11.5px; letter-spacing:.02em; color:var(--ink-soft);}
+.ledger-row .lr-value{font-family:"Gentium",serif; font-weight:700; font-size:17px; color:var(--ink);}
+.ledger-row.total{border-bottom:none; border-top:1.5px solid var(--ink); margin-top:4px; padding-top:12px;}
+.ledger-row.total .lr-label{color:var(--ink); font-weight:700;}
+.ledger-row.total .lr-value{font-size:22px; color:var(--brick);}
+
+.gauge-block{margin-top:15mm;}
+.gauge-label-row{display:flex; justify-content:space-between; align-items:baseline; font-family:"Gantari",sans-serif; font-size:10.5px; color:var(--ink-soft); margin-bottom:7px;}
+.gauge-label-row strong{color:var(--ink); font-size:13px;}
+.gauge-track{position:relative; width:100%; height:5px; background:var(--paper-shade); border-radius:3px;}
+.gauge-fill{position:absolute; left:0; top:0; height:100%; width:77%; background:var(--brass); border-radius:3px;}
+.gauge-tick{position:absolute; top:-4px; right:0; height:13px; width:1.5px; background:var(--ink);}
+.gauge-tick-label{position:absolute; top:11px; right:0; font-family:"Gantari",sans-serif; font-size:8px; color:var(--ink-soft); letter-spacing:.03em;}
+
+.variance-line{
+  margin-top:14mm; padding-top:8mm; border-top:0.75px solid var(--hair);
+  font-family:"Gentium",serif; font-size:12.5px; color:var(--ink-soft); font-style:italic; line-height:1.6;
+}
+
+.intro-para{font-size:12.5px; color:var(--ink-soft); line-height:1.65; margin-top:9px; max-width:135mm;}
+.intro-para strong{color:var(--ink); font-weight:700;}
+
+.read-note{
+  display:flex; gap:12px; margin-top:4mm; padding:9mm 10mm; background:var(--paper-shade); border-radius:2px;
+}
+.read-note .rn-mark{font-family:"Gentium",serif; font-style:italic; font-weight:700; font-size:15px; color:var(--brass-deep); flex-shrink:0;}
+.read-note p{font-family:"Gantari",sans-serif; font-size:9.5px; color:var(--ink-soft); line-height:1.7; letter-spacing:.01em;}
+.read-note p strong{color:var(--ink);}
+
+.process-strip{margin-top:4mm;}
+.process-strip .ps-title{font-family:"Gantari",sans-serif; font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); font-weight:700; margin-bottom:8mm;}
+.process-track{position:relative; display:flex; justify-content:space-between; padding-top:4px;}
+.process-track::before{content:""; position:absolute; top:4px; left:6px; right:6px; height:1px; background:var(--hair);}
+.process-step{position:relative; width:24%; text-align:left;}
+.process-step .dot{width:9px; height:9px; border-radius:50%; background:var(--paper); border:1.5px solid var(--brick); margin-bottom:7px;}
+.process-step.active .dot{background:var(--brick);}
+.process-step .ps-label{font-family:"Gantari",sans-serif; font-size:9.5px; font-weight:700; color:var(--ink); letter-spacing:.02em;}
+.process-step .ps-sub{font-family:"Gentium",serif; font-style:italic; font-size:10px; color:var(--ink-soft); margin-top:3px; line-height:1.4;}
+
+.impact-block{margin-top:2mm;}
+.impact-block .ib-title{font-family:"Gantari",sans-serif; font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--brass-deep); font-weight:700; margin-bottom:3mm;}
+.impact-row{display:flex; gap:16mm;}
+.impact-stat{flex:1; padding-top:6mm; border-top:1.5px solid var(--ink);}
+.impact-stat .is-num{font-family:"Gentium",serif; font-weight:700; font-size:24px; color:var(--brick);}
+.impact-stat .is-label{font-family:"Gantari",sans-serif; font-size:9.5px; color:var(--ink-soft); margin-top:4px; line-height:1.5;}
+
+/* ============ PAGE 3 — VITALS CHECK ============ */
+.flag-note{display:flex; gap:14px; margin-top:6mm;}
+.flag-tab{width:4px; flex-shrink:0; background:var(--brick); border-radius:1px;}
+.flag-note .fn-body{flex:1;}
+.flag-note h3{font-family:"Gentium",serif; font-weight:700; font-size:15.5px; color:var(--ink); margin-bottom:5px;}
+.flag-note p{font-size:12.5px; color:var(--ink-soft); line-height:1.6;}
+.flag-note .amt{font-family:"Gentium",serif; font-weight:700; font-size:20px; color:var(--brick); display:block; margin:6px 0;}
+.flag-note .tagline{
+  display:inline-block; margin-top:8px; font-family:"Gantari",sans-serif; font-size:9px; font-weight:700;
+  letter-spacing:.05em; text-transform:uppercase; color:var(--brass-deep);
+}
+.flag-note .tagline::before{content:"\2014  "; }
+
+.pulse-flow-wrap{margin-top:16mm;}
+.pulse-flow-labels{display:flex; justify-content:space-between; font-family:"Gantari",sans-serif; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:4px;}
+.pulse-flow-svg{width:100%; height:34mm;}
+.pf-figures{display:flex; justify-content:space-between; margin-top:2mm;}
+.pf-figure{text-align:left;}
+.pf-figure.right{text-align:right;}
+.pf-figure .before{font-family:"Gantari",sans-serif; font-size:11px; color:var(--ink-soft); text-decoration:line-through; opacity:.7;}
+.pf-figure .after{font-family:"Gentium",serif; font-weight:700; font-size:19px; color:var(--ink);}
+
+.net-effect{
+  margin-top:14mm; padding-top:8mm; border-top:0.75px solid var(--hair);
+  font-family:"Gentium",serif; font-style:italic; font-size:12.5px; color:var(--ink-soft); text-align:center; line-height:1.6;
+}
+
+/* ============ PAGE 4 — LEDGER TABLE ============ */
+table.acct-table{width:100%; border-collapse:collapse; margin-top:10mm;}
+table.acct-table thead th{
+  font-family:"Gantari",sans-serif; font-size:8.5px; letter-spacing:.07em; text-transform:uppercase;
+  font-weight:700; color:var(--ink-soft); text-align:left; padding:0 6px 8px;
+  border-bottom:1.5px solid var(--ink);
+}
+table.acct-table thead th.num{text-align:right;}
+table.acct-table tbody td{
+  font-family:"Gantari",sans-serif; font-size:10px; color:var(--ink); padding:9px 6px;
+  border-bottom:0.75px solid var(--hair-soft); vertical-align:top;
+}
+table.acct-table tbody td.num{text-align:right; font-variant-numeric:tabular-nums;}
+table.acct-table tbody td .was{display:block; font-size:8px; color:var(--ink-soft); text-decoration:line-through; opacity:.7; margin-top:1px;}
+table.acct-table tbody td .cr{display:block; font-size:8px; color:var(--ink-soft); margin-top:1px;}
+table.acct-table tbody tr.total-row td{
+  border-top:1.5px solid var(--ink); border-bottom:none; font-weight:700; padding-top:11px;
+}
+.status-ok{color:var(--green); font-weight:600;}
+.status-ok::before{content:"\25CF  "; font-size:7px; vertical-align:middle;}
+.status-flag{color:var(--brick); font-weight:600;}
+.status-flag::before{content:"\25B2  "; font-size:7px; vertical-align:middle;}
+.var-zero{color:var(--ink-soft);}
+.var-pos{color:var(--brass-deep); font-weight:600;}
+
+.table-footnote{
+  margin-top:10mm; padding-top:6mm; border-top:0.75px solid var(--hair);
+  font-family:"Gentium",serif; font-size:11px; color:var(--ink-soft); line-height:1.65;
+}
+.table-footnote strong{color:var(--ink);}
+
+.status-key{display:flex; gap:24px; flex-wrap:wrap;}
+.status-key .sk-item{display:flex; align-items:baseline; gap:8px; font-family:"Gantari",sans-serif; font-size:10px; color:var(--ink-soft);}
+.status-key .sk-item strong{color:var(--ink); font-weight:700;}
+
+/* ============ PHOTO PLATES ============ */
+.plate-page{padding:0; display:flex; flex-direction:column;}
+.plate-photo{flex:1; overflow:hidden; position:relative;}
+.plate-photo img{width:100%; height:100%; object-fit:cover; display:block;}
+.plate-caption{
+  padding:9mm 18mm 11mm; border-top:0.75px solid var(--hair);
+}
+.plate-caption .fig-no{font-family:"Gantari",sans-serif; font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--brass-deep); font-weight:700; margin-bottom:3px;}
+.plate-caption h3{font-family:"Gentium",serif; font-weight:700; font-size:16.5px; color:var(--ink);}
+.plate-caption p{font-family:"Gentium",serif; font-style:italic; font-size:11.5px; color:var(--ink-soft); margin-top:2px;}
+
+.plate-placeholder{
+  flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;
+  background:
+    repeating-linear-gradient(45deg, rgba(126,35,32,0.045) 0 14px, transparent 14px 28px),
+    var(--paper-shade);
+  color:var(--brick); opacity:.85;
+}
+.plate-placeholder svg{width:44px; height:44px;}
+.plate-placeholder span{font-family:"Gantari",sans-serif; font-size:11px; letter-spacing:.09em; text-transform:uppercase; font-weight:700;}
+
+/* two plates stacked on one page, to avoid a page of just one photo */
+.split-plate-page{padding:0; display:flex; flex-direction:column;}
+.split-plate{flex:1 1 50%; display:flex; flex-direction:column; min-height:0;}
+.split-plate + .split-plate{box-shadow:0 -1px 0 var(--paper);}
+.split-plate .plate-photo{flex:1;}
+.split-plate .plate-caption{padding:7mm 18mm 8mm;}
+.split-plate .plate-caption h3{font-size:15px;}
+.split-plate .plate-caption p{font-size:10.5px;}
+.split-plate .plate-placeholder{gap:9px;}
+.split-plate .plate-placeholder svg{width:34px; height:34px;}
+
+/* ============ PAGE 9 — CLOSING ============ */
+.closing-page{background:var(--brick); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20mm; text-align:center; position:relative; overflow:hidden;}
+.closing-pulse{width:165mm; max-width:100%; height:42mm; margin-bottom:11mm;}
+.closing-page .quote{font-family:"Gentium",serif; font-style:italic; font-size:19pt; color:var(--paper); max-width:155mm; line-height:1.6; margin-bottom:11mm;}
+.closing-page img{height:10mm; width:auto; margin-bottom:9mm; opacity:.95;}
+.closing-page .org{font-family:"Gantari",sans-serif; font-size:10.5pt; letter-spacing:.05em; color:#e7c9a8; margin-bottom:5mm;}
+.closing-page .tagline{font-family:"Gentium",serif; font-style:italic; font-size:10.5pt; color:rgba(251,248,239,0.68); max-width:120mm; line-height:1.6; margin-bottom:12mm;}
+.closing-page .contact{
+  font-family:"Gantari",sans-serif; font-size:8.5pt; letter-spacing:.06em; text-transform:uppercase;
+  color:rgba(251,248,239,0.55); padding-top:6mm; border-top:0.75px solid rgba(251,248,239,0.25); width:80mm;
+}
+
+/* ============ PRINT ============ */
+@media print{
+  body{background:none;}
+  .toolbar{display:none !important;}
+  .pages-wrap{padding:0;}
+  .a4-page{box-shadow:none; margin:0; width:210mm; min-height:297mm;}
+  @page{size:A4; margin:0;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <span class="tb-label">FUND UTILISATION REPORT &middot; A4 &middot; 7 PAGES</span>
+  <button class="download-btn" id="downloadBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13m0 0l-4-4m4 4l4-4M4 19h16"/></svg>
+    <span id="downloadBtnLabel">Download PDF</span>
+  </button>
+</div>
+
+<div class="pages-wrap" id="pagesWrap">
+
+  <!-- PAGE 1 — COVER -->
+  <section class="a4-page cover-page">
+    <div class="cover-photo">
+      <img src="https://raw.githubusercontent.com/owofoneworldonefamily-design/icu-healing-beds/main/Capitol%20Hill%20Full%20Picture.jpg" alt="Full view of the hospital building" crossorigin="anonymous">
+    </div>
+    <div class="cover-scrim"></div>
+    <div class="cover-mark-wrap">
+      <img class="cover-mark" src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/OWOF_LOGO_H_RED_DIGITAL_web600.png" alt="One World One Family Mission" crossorigin="anonymous">
+    </div>
+    <div class="cover-content">
+      <span class="eyebrow">Fund Utilisation Report</span>
+      <h1>MoU&nbsp;1 &mdash; SH&nbsp;CCC</h1>
+      <svg class="cover-pulse" viewBox="0 0 640 40" preserveAspectRatio="none">
+        <path d="M0,20 L230,20 L242,20 L252,4 L264,36 L276,20 L288,20 L640,20" fill="none" stroke="#e2b869" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="cover-institute">Sri Madhusudan Sai Institute of Medical Sciences and Research</div>
+      <div class="cover-meta-row">
+        <span>Prepared for <strong>Donors &amp; Partners</strong></span>
+        <span>Currency <strong>INR</strong></span>
+        <span>Report date <strong>28 July 2026</strong></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 2 — THE LEDGER -->
+  <section class="a4-page pad">
+    <div class="ledger-head">
+      <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/OWOF_LOGO_H_RED_DIGITAL_web600.png" alt="One World One Family Mission" crossorigin="anonymous">
+      <div class="doc-meta"><strong>MoU 1 &ndash; SH CCC</strong><br>Fund Utilisation Statement</div>
+    </div>
+
+    <span class="eyebrow">The ledger</span>
+    <h2 class="section-title">Actual spent so far</h2>
+    <p class="section-kicker">Every rupee proposed, given, spent, and reported against MoU 1 &ndash; SH CCC.</p>
+
+    <div class="page-flow">
+      <div>
+        <p class="intro-para">Nearly two out of every three people in India live in a rural area, yet barely <strong>one in four ICU beds</strong> is anywhere near them. MoU 1 &ndash; SH CCC funds the equipment, theatre, and construction that close that gap at Sri Madhusudan Sai Institute of Medical Sciences and Research &mdash; the ledger below is the record of that spend to date.</p>
+
+        <div class="ledger-rows">
+          <div class="ledger-row"><span class="lr-label">Proposed</span><span class="lr-value tab">&#8377;65,00,00,000</span></div>
+          <div class="ledger-row"><span class="lr-label">Actual given</span><span class="lr-value tab">&#8377;65,00,00,000</span></div>
+          <div class="ledger-row"><span class="lr-label">Actual spent</span><span class="lr-value tab">&#8377;50,04,00,000</span></div>
+          <div class="ledger-row"><span class="lr-label">Reported</span><span class="lr-value tab">&#8377;50,00,00,000</span></div>
+          <div class="ledger-row total"><span class="lr-label">Variance</span><span class="lr-value tab">&#8377;15,00,00,000</span></div>
+        </div>
+      </div>
+
+      <div class="read-note">
+        <span class="rn-mark">&ldquo;</span>
+        <p><strong>Reading the ledger:</strong> &ldquo;Given&rdquo; is what donors have released. &ldquo;Spent&rdquo; is what has left our accounts against invoices. &ldquo;Reported&rdquo; is what has been formally accounted for with the institute. A gap between the three is normal in an active build &mdash; it is not a shortfall.</p>
+      </div>
+
+      <div>
+        <div class="gauge-block">
+          <div class="gauge-label-row"><span>Overall utilisation against proposed budget</span><strong>77%</strong></div>
+          <div class="gauge-track">
+            <div class="gauge-fill"></div>
+            <div class="gauge-tick"></div>
+            <div class="gauge-tick-label">100%</div>
+          </div>
+        </div>
+        <p class="variance-line">The &#8377;15,00,00,000 variance reflects funds proposed but not yet disbursed &mdash; primarily the Cath Lab order discussed on the following page, plus rounding on the ICU Beds line.</p>
+      </div>
+    </div>
+
+    <div class="folio"><span>One World One Family Mission</span><span>02</span></div>
+  </section>
+
+  <!-- PAGE 3 — VITALS CHECK -->
+  <section class="a4-page pad">
+    <span class="eyebrow">Vitals check &middot; Cath Lab</span>
+    <h2 class="section-title">A budget revision, not a budget increase</h2>
+    <p class="section-kicker">How a &#8377;15,00,00,000 order gets funded without asking donors for more.</p>
+
+    <div class="page-flow">
+      <div class="flag-note">
+        <div class="flag-tab"></div>
+        <div class="fn-body">
+          <h3>Order placed</h3>
+          <p>An order has now been placed for the Cath Lab equipment.</p>
+          <span class="amt tab">&#8377;15,00,00,000</span>
+          <p>The actual cost came in higher than the originally proposed &#8377;5,00,00,000 &mdash; the true requirement is &#8377;15,00,00,000.</p>
+          <span class="tagline">Funded by reallocation, not additional funds</span>
+        </div>
+      </div>
+
+      <div class="pulse-flow-wrap">
+        <div class="pulse-flow-labels"><span>Robotics &middot; proposed</span><span>Cath Lab &middot; proposed</span></div>
+        <svg class="pulse-flow-svg" viewBox="0 0 680 130" preserveAspectRatio="none">
+          <path d="M10,65 L260,65 L280,20 L300,110 L320,65 L420,65" fill="none" stroke="#7e2320" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M420,65 L640,65" fill="none" stroke="#7e2320" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+          <defs>
+            <marker id="arrow" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 Z" fill="#7e2320"/>
+            </marker>
+          </defs>
+          <text x="300" y="16" text-anchor="middle" font-family="Gantari, sans-serif" font-size="12" font-weight="700" fill="#7e2320">&#8377;10.00 Cr moved</text>
+        </svg>
+        <div class="pf-figures">
+          <div class="pf-figure">
+            <div class="before tab">&#8377;20,00,00,000</div>
+            <div class="after tab">&#8377;10,00,00,000</div>
+          </div>
+          <div class="pf-figure right">
+            <div class="before tab">&#8377;5,00,00,000</div>
+            <div class="after tab">&#8377;15,00,00,000</div>
+          </div>
+        </div>
+        <p class="net-effect">Net effect: &#8377;0 change to the &#8377;65,00,00,000 total proposed budget for MoU 1 &ndash; SH CCC &mdash; only a shift between two lines.</p>
+      </div>
+
+      <div class="process-strip">
+        <div class="ps-title">What happens next</div>
+        <div class="process-track">
+          <div class="process-step active">
+            <div class="dot"></div>
+            <div class="ps-label">Order placed</div>
+            <div class="ps-sub">Confirmed, this update</div>
+          </div>
+          <div class="process-step">
+            <div class="dot"></div>
+            <div class="ps-label">Delivery</div>
+            <div class="ps-sub">Equipment reaches site</div>
+          </div>
+          <div class="process-step">
+            <div class="dot"></div>
+            <div class="ps-label">Installation</div>
+            <div class="ps-sub">Fitted &amp; tested in the Cath Lab</div>
+          </div>
+          <div class="process-step">
+            <div class="dot"></div>
+            <div class="ps-label">Commissioning</div>
+            <div class="ps-sub">Line moves to &ldquo;Completed&rdquo;</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="folio"><span>One World One Family Mission</span><span>03</span></div>
+  </section>
+
+  <!-- PAGE 4 — THE FULL ACCOUNT -->
+  <section class="a4-page pad">
+    <span class="eyebrow">The full account</span>
+    <h2 class="section-title">MoU 1 &ndash; SH CCC, line by line</h2>
+    <p class="section-kicker">Struck-through figures are original proposals, superseded by the revision on the previous page.</p>
+
+    <div class="page-flow">
+      <table class="acct-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th class="num">Proposed</th>
+            <th class="num">Actual spent</th>
+            <th class="num">Reported</th>
+            <th class="num">Variance</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>(a) ICU Beds &ndash; 30 Nos.</td>
+            <td class="num">&#8377;10,00,00,000<span class="cr">&#8377;10.00 Cr</span></td>
+            <td class="num">&#8377;10,04,00,000</td>
+            <td class="num">&#8377;10,00,00,000</td>
+            <td class="num var-zero">&mdash;</td>
+            <td><span class="status-ok">Completed</span></td>
+          </tr>
+          <tr>
+            <td>(b) Cath Lab &amp; Robotics <em>(revised)</em></td>
+            <td class="num">&#8377;15,00,00,000<span class="was">was &#8377;5,00,00,000</span></td>
+            <td class="num">&mdash;</td>
+            <td class="num">&mdash;</td>
+            <td class="num var-pos">&#8377;15,00,00,000</td>
+            <td><span class="status-flag">Order placed</span></td>
+          </tr>
+          <tr>
+            <td>(c) Cardiac OT &ndash; 1 No.</td>
+            <td class="num">&#8377;5,00,00,000<span class="cr">&#8377;5.00 Cr</span></td>
+            <td class="num">&#8377;5,00,00,000</td>
+            <td class="num">&#8377;5,00,00,000</td>
+            <td class="num var-zero">&mdash;</td>
+            <td><span class="status-ok">Completed</span></td>
+          </tr>
+          <tr>
+            <td>(d) Robotics <em>(revised)</em></td>
+            <td class="num">&#8377;10,00,00,000<span class="was">was &#8377;20,00,00,000</span></td>
+            <td class="num">&#8377;10,00,00,000</td>
+            <td class="num">&#8377;10,00,00,000</td>
+            <td class="num var-zero">&mdash;</td>
+            <td><span class="status-ok">Completed</span></td>
+          </tr>
+          <tr>
+            <td>(e) Construction Costs</td>
+            <td class="num">&#8377;25,00,00,000<span class="cr">&#8377;25.00 Cr</span></td>
+            <td class="num">&#8377;25,00,00,000</td>
+            <td class="num">&#8377;25,00,00,000</td>
+            <td class="num var-zero">&mdash;</td>
+            <td><span class="status-ok">Completed</span></td>
+          </tr>
+          <tr class="total-row">
+            <td>Total</td>
+            <td class="num">&#8377;65,00,00,000</td>
+            <td class="num">&#8377;50,04,00,000</td>
+            <td class="num">&#8377;50,00,00,000</td>
+            <td class="num">&#8377;15,00,00,000</td>
+            <td>77% utilised</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="table-footnote">
+        <strong>Note.</strong> Proposed figures for (b) and (d) have been revised to reflect the confirmed &#8377;15,00,00,000
+        Cath Lab order, funded by shifting &#8377;10,00,00,000 from the Robotics balance. The MoU total proposed budget is
+        unchanged at &#8377;65,00,00,000, and the overall variance is unchanged at &#8377;15,00,00,000 &mdash; it now sits
+        entirely in the Cath Lab line, pending disbursement against the placed order.
+      </p>
+
+      <div class="status-key">
+        <span class="sk-item">&#9679; <strong>Completed</strong> &mdash; fully disbursed and reported</span>
+        <span class="sk-item">&#9650; <strong>Order placed</strong> &mdash; confirmed, pending disbursement</span>
+      </div>
+    </div>
+
+    <div class="folio"><span>One World One Family Mission</span><span>04</span></div>
+  </section>
+
+  <!-- PAGE 5 — PLATES: FRONT VIEW + ICU WARD -->
+  <section class="a4-page split-plate-page">
+    <div class="split-plate">
+      <div class="plate-photo">
+        <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/Front%20Image.jpg" alt="Front view of the hospital building" crossorigin="anonymous">
+      </div>
+      <div class="plate-caption">
+        <div class="fig-no">Fig. 01</div>
+        <h3>Building &middot; front view</h3>
+        <p>Sri Sathya Sai Sitaram Jindal Block, Phase 1</p>
+      </div>
+    </div>
+    <div class="split-plate">
+      <div class="plate-photo">
+        <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/icu%20ward.jpg" alt="ICU ward with rows of beds" crossorigin="anonymous">
+      </div>
+      <div class="plate-caption">
+        <div class="fig-no">Fig. 02</div>
+        <h3>ICU ward</h3>
+        <p>Item (a) &middot; ICU Beds &ndash; 30 Nos., completed</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 6 — PLATES: OPERATION THEATRE + ROBOTICS PENDING -->
+  <section class="a4-page split-plate-page">
+    <div class="split-plate">
+      <div class="plate-photo">
+        <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/OT.jpg" alt="Operation theatre" crossorigin="anonymous">
+      </div>
+      <div class="plate-caption">
+        <div class="fig-no">Fig. 03</div>
+        <h3>Operation theatre</h3>
+        <p>Item (c) &middot; Cardiac OT &ndash; 1 No., completed</p>
+      </div>
+    </div>
+    <div class="split-plate">
+      <div class="plate-placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-9 9"/></svg>
+        <span>Photo pending</span>
+      </div>
+      <div class="plate-caption">
+        <div class="fig-no">Fig. 04</div>
+        <h3>Robotics</h3>
+        <p>Item (d) &middot; installation photo to follow</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 9 — CLOSING -->
+  <section class="a4-page closing-page">
+    <svg class="closing-pulse" viewBox="0 0 700 140" preserveAspectRatio="none">
+      <path d="M0,70 L260,70 L276,70 L288,20 L304,120 L320,70 L340,70 L700,70"
+        fill="none" stroke="#e2b869" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <p class="quote">&ldquo;The world is one family, and no one should be denied life's basic needs.&rdquo;</p>
+    <img src="https://raw.githubusercontent.com/swetchaartsai/BHAKTHI.HERITAGE.PROJECT.ART.CALENDAR.2026/main/OWOF_LOGO_H_CREAM_DIGITAL_web600.png" alt="One World One Family Mission" crossorigin="anonymous">
+    <div class="org">Sri Madhusudan Sai Institute of Medical Sciences and Research</div>
+    <p class="tagline">Programmes in healthcare, education, and nutrition, across 100 countries &mdash; free of charge.</p>
+    <div class="contact">Prepared by One World One Family Mission &middot; capex@ssslsg.org</div>
+  </section>
+
+</div>
+
+<script>
+document.getElementById('downloadBtn').addEventListener('click', async function(){
+  const btn = this;
+  const label = document.getElementById('downloadBtnLabel');
+  if(btn.disabled) return;
+  btn.disabled = true;
+  const originalLabel = label.textContent;
+
+  try{
+    if(document.fonts && document.fonts.ready){ await document.fonts.ready; }
+    if(!window.html2canvas || !window.jspdf){
+      label.textContent = 'Still loading\u2026';
+      await new Promise(res => setTimeout(res, 1200));
+    }
+    if(!window.html2canvas || !window.jspdf){
+      alert('The PDF library is still loading \u2014 please try again in a moment.');
+      return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+    const pages = document.querySelectorAll('.a4-page');
+
+    for(let i = 0; i < pages.length; i++){
+      label.textContent = 'Rendering page ' + (i+1) + ' of ' + pages.length + '\u2026';
+      const canvas = await html2canvas(pages[i], {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#fbf8ef',
+        logging: false,
+      });
+      const imgData = canvas.toDataURL('image/jpeg', 0.93);
+      if(i > 0) pdf.addPage();
+      pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+    }
+
+    label.textContent = 'Saving\u2026';
+    pdf.save('ICU-Fund-Utilisation-Report.pdf');
+  } catch(err){
+    console.error(err);
+    alert('Something went wrong preparing the PDF. Please try again.');
+  } finally {
+    label.textContent = originalLabel;
+    btn.disabled = false;
+  }
+});
+</script>
+
+</body>
+</html>
